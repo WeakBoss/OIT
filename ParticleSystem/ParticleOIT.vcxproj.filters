@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ParticleSystem">
+      <UniqueIdentifier>{f00d6077-f15e-4a6e-a73f-b920d68f6b55}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -22,18 +25,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\ParticleSystemObj.cpp">
-      <Filter>源文件</Filter>
+      <Filter>ParticleSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\ParticleOITPCH.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="inc\ParticleSystemObj.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="inc\ParticleSystemConfiguration.h">
-      <Filter>头文件</Filter>
+      <Filter>ParticleSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\ParticleSystemObj.h">
+      <Filter>ParticleSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

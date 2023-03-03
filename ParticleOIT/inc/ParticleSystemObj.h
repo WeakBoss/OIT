@@ -1,6 +1,6 @@
 #pragma once
 #include "ParticleOITPCH.h"
-
+#include "RandomBuffer.h"
 class CParticleSystemObj :public IGameObject
 {
 public:
@@ -8,6 +8,8 @@ public:
     {
 
     }
+    void initV() override;
+    void updateV() override;
 private:
-
+    CRandomBuffer b;
 };

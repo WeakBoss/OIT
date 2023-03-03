@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)OpenGLFramework\inc;$(ProjectDir)inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ParticleSystem\inc;$(SolutionDir)OpenGLFramework\inc;$(ProjectDir)inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>ParticleOITPCH.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -133,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)OpenGLFramework\inc;$(ProjectDir)inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)ParticleSystem\inc;$(SolutionDir)OpenGLFramework\inc;$(ProjectDir)inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>ParticleOITPCH.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -148,6 +148,9 @@
     <ProjectReference Include="..\OpenGLFramework\OpenGLFramework.vcxproj">
       <Project>{7a93678e-e40b-4ba7-b234-5acc20ea6243}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\ParticleSystem\ParticleSystem.vcxproj">
+      <Project>{91193f5e-57b2-41b8-9ea1-cb6878dcc42f}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
@@ -161,7 +164,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\ParticleOITPCH.h" />
-    <ClInclude Include="inc\ParticleSystemConfiguration.h" />
     <ClInclude Include="inc\ParticleSystemObj.h" />
   </ItemGroup>
   <ItemGroup>

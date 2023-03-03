@@ -32,9 +32,6 @@
     <ClInclude Include="inc\ParticleOITPCH.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="inc\ParticleSystemConfiguration.h">
-      <Filter>ParticleSystem</Filter>
-    </ClInclude>
     <ClInclude Include="inc\ParticleSystemObj.h">
       <Filter>ParticleSystem</Filter>
     </ClInclude>
