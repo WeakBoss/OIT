@@ -1,0 +1,3 @@
+D:/project/volume-render/ThirdParty/gli/out/build/x64-Debug/CMakeFiles/gli_dummy.dir
+D:/project/volume-render/ThirdParty/gli/out/build/x64-Debug/CMakeFiles/edit_cache.dir
+D:/project/volume-render/ThirdParty/gli/out/build/x64-Debug/CMakeFiles/rebuild_cache.dir

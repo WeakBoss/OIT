@@ -1,0 +1,66 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32002.261
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ParticleOIT", "ParticleOIT\ParticleOIT.vcxproj", "{21D53B18-177A-42DD-91B6-143AAA260A9C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenGLFramework", "OpenGLFramework\OpenGLFramework.vcxproj", "{7A93678E-E40B-4BA7-B234-5ACC20EA6243}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestCases", "TestCases", "{AA590073-B242-4F78-AF3C-9BD9A04E55F1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestCase_001(ComputerShader)", "TestCases\TestCase_001(ComputerShader)\TestCase_001(ComputerShader).vcxproj", "{FD978F1D-CB7B-472B-A52E-CF6628D3D21E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ParticleSystem", "ParticleSystem\ParticleSystem.vcxproj", "{735CD5DE-0A7F-41A4-B303-3D8B3F7A143E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{21D53B18-177A-42DD-91B6-143AAA260A9C}.Debug|x64.ActiveCfg = Debug|x64
+		{21D53B18-177A-42DD-91B6-143AAA260A9C}.Debug|x64.Build.0 = Debug|x64
+		{21D53B18-177A-42DD-91B6-143AAA260A9C}.Debug|x86.ActiveCfg = Debug|Win32
+		{21D53B18-177A-42DD-91B6-143AAA260A9C}.Debug|x86.Build.0 = Debug|Win32
+		{21D53B18-177A-42DD-91B6-143AAA260A9C}.Release|x64.ActiveCfg = Release|x64
+		{21D53B18-177A-42DD-91B6-143AAA260A9C}.Release|x64.Build.0 = Release|x64
+		{21D53B18-177A-42DD-91B6-143AAA260A9C}.Release|x86.ActiveCfg = Release|Win32
+		{21D53B18-177A-42DD-91B6-143AAA260A9C}.Release|x86.Build.0 = Release|Win32
+		{7A93678E-E40B-4BA7-B234-5ACC20EA6243}.Debug|x64.ActiveCfg = Debug|x64
+		{7A93678E-E40B-4BA7-B234-5ACC20EA6243}.Debug|x64.Build.0 = Debug|x64
+		{7A93678E-E40B-4BA7-B234-5ACC20EA6243}.Debug|x86.ActiveCfg = Debug|Win32
+		{7A93678E-E40B-4BA7-B234-5ACC20EA6243}.Debug|x86.Build.0 = Debug|Win32
+		{7A93678E-E40B-4BA7-B234-5ACC20EA6243}.Release|x64.ActiveCfg = Release|x64
+		{7A93678E-E40B-4BA7-B234-5ACC20EA6243}.Release|x64.Build.0 = Release|x64
+		{7A93678E-E40B-4BA7-B234-5ACC20EA6243}.Release|x86.ActiveCfg = Release|Win32
+		{7A93678E-E40B-4BA7-B234-5ACC20EA6243}.Release|x86.Build.0 = Release|Win32
+		{FD978F1D-CB7B-472B-A52E-CF6628D3D21E}.Debug|x64.ActiveCfg = Debug|x64
+		{FD978F1D-CB7B-472B-A52E-CF6628D3D21E}.Debug|x64.Build.0 = Debug|x64
+		{FD978F1D-CB7B-472B-A52E-CF6628D3D21E}.Debug|x86.ActiveCfg = Debug|Win32
+		{FD978F1D-CB7B-472B-A52E-CF6628D3D21E}.Debug|x86.Build.0 = Debug|Win32
+		{FD978F1D-CB7B-472B-A52E-CF6628D3D21E}.Release|x64.ActiveCfg = Release|x64
+		{FD978F1D-CB7B-472B-A52E-CF6628D3D21E}.Release|x64.Build.0 = Release|x64
+		{FD978F1D-CB7B-472B-A52E-CF6628D3D21E}.Release|x86.ActiveCfg = Release|Win32
+		{FD978F1D-CB7B-472B-A52E-CF6628D3D21E}.Release|x86.Build.0 = Release|Win32
+		{735CD5DE-0A7F-41A4-B303-3D8B3F7A143E}.Debug|x64.ActiveCfg = Debug|x64
+		{735CD5DE-0A7F-41A4-B303-3D8B3F7A143E}.Debug|x64.Build.0 = Debug|x64
+		{735CD5DE-0A7F-41A4-B303-3D8B3F7A143E}.Debug|x86.ActiveCfg = Debug|Win32
+		{735CD5DE-0A7F-41A4-B303-3D8B3F7A143E}.Debug|x86.Build.0 = Debug|Win32
+		{735CD5DE-0A7F-41A4-B303-3D8B3F7A143E}.Release|x64.ActiveCfg = Release|x64
+		{735CD5DE-0A7F-41A4-B303-3D8B3F7A143E}.Release|x64.Build.0 = Release|x64
+		{735CD5DE-0A7F-41A4-B303-3D8B3F7A143E}.Release|x86.ActiveCfg = Release|Win32
+		{735CD5DE-0A7F-41A4-B303-3D8B3F7A143E}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FD978F1D-CB7B-472B-A52E-CF6628D3D21E} = {AA590073-B242-4F78-AF3C-9BD9A04E55F1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FB6E43EE-01EA-4030-A9C3-F601093FACD1}
+	EndGlobalSection
+EndGlobal
