@@ -145,17 +145,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="inc\VectorField.cpp" />
+    <ClCompile Include="src\AppendComsumeBuffer.cpp" />
+    <ClCompile Include="src\ParticleSystem.cpp" />
     <ClCompile Include="src\ParticleSystemPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ParticleSystemPCH.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ParticleSystemPCH.h</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\RandomBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="inc\AppendConsumeBuffer.h" />
+    <ClInclude Include="inc\ParticleSystem.h" />
+    <ClInclude Include="inc\ParticleSystemCommon.h" />
     <ClInclude Include="inc\ParticleSystemPCH.h" />
-    <ClInclude Include="inc\ParticleSystemConfiguration.h" />
     <ClInclude Include="inc\RandomBuffer.h" />
+    <ClInclude Include="inc\VectorField.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
