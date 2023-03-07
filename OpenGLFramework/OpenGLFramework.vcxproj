@@ -150,6 +150,7 @@
     <ClInclude Include="..\ThirdParty\imgui\imgui_internal.h" />
     <ClInclude Include="inc\AABB.h" />
     <ClInclude Include="inc\App.h" />
+    <ClInclude Include="inc\AppendConsumeBuffer.h" />
     <ClInclude Include="inc\Bounding.h" />
     <ClInclude Include="inc\Camera.h" />
     <ClInclude Include="inc\Common.h" />
@@ -157,12 +158,15 @@
     <ClInclude Include="inc\GameObject.h" />
     <ClInclude Include="inc\GLFWWindow.h" />
     <ClInclude Include="inc\GUI.h" />
-    <ClInclude Include="inc\InputManager.h" />
     <ClInclude Include="inc\Interface.h" />
     <ClInclude Include="inc\MainGUI.h" />
     <ClInclude Include="inc\Mesh.h" />
     <ClInclude Include="inc\Model.h" />
     <ClInclude Include="inc\MVector.h" />
+    <ClInclude Include="inc\ParticleSystem.h" />
+    <ClInclude Include="inc\Configuration.h" />
+    <ClInclude Include="inc\ParticleSystemCommon.h" />
+    <ClInclude Include="inc\RandomBuffer.h" />
     <ClInclude Include="inc\RenderPass.h" />
     <ClInclude Include="inc\ResourceManager.h" />
     <ClInclude Include="inc\Shader.h" />
@@ -170,6 +174,7 @@
     <ClInclude Include="inc\Tools.h" />
     <ClInclude Include="inc\UBO4ProjectionWorld.h" />
     <ClInclude Include="inc\Utils.h" />
+    <ClInclude Include="inc\VectorField.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\ThirdParty\imgui\backends\imgui_impl_glfw.cpp" />
@@ -178,8 +183,10 @@
     <ClCompile Include="..\ThirdParty\imgui\imgui_draw.cpp" />
     <ClCompile Include="..\ThirdParty\imgui\imgui_tables.cpp" />
     <ClCompile Include="..\ThirdParty\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="inc\VectorField.cpp" />
     <ClCompile Include="src\AABB.cpp" />
     <ClCompile Include="src\App.cpp" />
+    <ClCompile Include="src\AppendComsumeBuffer.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Common.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
@@ -190,6 +197,8 @@
     <ClCompile Include="src\MainGUI.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Model.cpp" />
+    <ClCompile Include="src\ParticleSystem.cpp" />
+    <ClCompile Include="src\RandomBuffer.cpp" />
     <ClCompile Include="src\RenderPass.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\Shader.cpp" />
@@ -199,6 +208,26 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="shaders\Common.glsl" />
+    <None Include="shaders\cs_calculate_dp.glsl" />
+    <None Include="shaders\cs_emission.glsl" />
+    <None Include="shaders\cs_fill_indices.glsl" />
+    <None Include="shaders\cs_simulation.glsl" />
+    <None Include="shaders\cs_sort_final.glsl" />
+    <None Include="shaders\cs_sort_step.glsl" />
+    <None Include="shaders\cs_update_args.glsl" />
+    <None Include="shaders\fs_basic.glsl" />
+    <None Include="shaders\fs_grid.glsl" />
+    <None Include="shaders\gs_stretched_sprite.glsl" />
+    <None Include="shaders\inc_curlnoise.glsl" />
+    <None Include="shaders\inc_distance_func.glsl" />
+    <None Include="shaders\inc_distance_utils.glsl" />
+    <None Include="shaders\inc_math.glsl" />
+    <None Include="shaders\inc_perlin.glsl" />
+    <None Include="shaders\inc_perlin_2d.glsl" />
+    <None Include="shaders\inc_perlin_3d.glsl" />
+    <None Include="shaders\vs_basic.glsl" />
+    <None Include="shaders\vs_grid.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

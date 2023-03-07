@@ -19,6 +19,18 @@
     <Filter Include="Libs\imgui">
       <UniqueIdentifier>{346ca15f-753d-4fe8-8b09-9f3491017b73}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ParticleSystem">
+      <UniqueIdentifier>{40587088-33b0-47fb-8af3-d52f6bd7db96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ParticleSystem\头文件">
+      <UniqueIdentifier>{1dfd2552-c2ef-4784-96aa-46ee7a0b062a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ParticleSystem\源文件">
+      <UniqueIdentifier>{0693d52e-2499-44f6-b7dc-7677d5520135}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ParticleSystem\shaders">
+      <UniqueIdentifier>{3b094ccd-a80b-464d-aa1c-8b6c0c523ccf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\AABB.h">
@@ -46,9 +58,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="inc\GUI.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\InputManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="inc\Interface.h">
@@ -101,6 +110,24 @@
     </ClInclude>
     <ClInclude Include="..\ThirdParty\imgui\backends\imgui_impl_opengl3.h">
       <Filter>Libs\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\AppendConsumeBuffer.h">
+      <Filter>ParticleSystem\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\ParticleSystem.h">
+      <Filter>ParticleSystem\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\Configuration.h">
+      <Filter>ParticleSystem\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\RandomBuffer.h">
+      <Filter>ParticleSystem\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\VectorField.h">
+      <Filter>ParticleSystem\头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\ParticleSystemCommon.h">
+      <Filter>ParticleSystem\头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -176,8 +203,80 @@
     <ClCompile Include="..\ThirdParty\imgui\imgui_tables.cpp">
       <Filter>Libs\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="inc\VectorField.cpp">
+      <Filter>ParticleSystem\头文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ParticleSystem.cpp">
+      <Filter>ParticleSystem\源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AppendComsumeBuffer.cpp">
+      <Filter>ParticleSystem\源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RandomBuffer.cpp">
+      <Filter>ParticleSystem\源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="shaders\cs_calculate_dp.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
+    <None Include="shaders\cs_emission.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
+    <None Include="shaders\cs_fill_indices.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
+    <None Include="shaders\cs_simulation.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
+    <None Include="shaders\cs_sort_final.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
+    <None Include="shaders\cs_sort_step.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
+    <None Include="shaders\cs_update_args.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
+    <None Include="shaders\fs_basic.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
+    <None Include="shaders\fs_grid.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
+    <None Include="shaders\gs_stretched_sprite.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
+    <None Include="shaders\inc_curlnoise.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
+    <None Include="shaders\inc_distance_func.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
+    <None Include="shaders\inc_distance_utils.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
+    <None Include="shaders\inc_math.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
+    <None Include="shaders\inc_perlin.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
+    <None Include="shaders\inc_perlin_2d.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
+    <None Include="shaders\inc_perlin_3d.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
+    <None Include="shaders\vs_basic.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
+    <None Include="shaders\vs_grid.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
+    <None Include="shaders\Common.glsl">
+      <Filter>ParticleSystem\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

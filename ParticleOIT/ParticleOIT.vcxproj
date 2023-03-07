@@ -116,7 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)ParticleSystem\inc;$(SolutionDir)OpenGLFramework\inc;$(ProjectDir)inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)OpenGLFramework\inc;$(ProjectDir)inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>ParticleOITPCH.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -133,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)ParticleSystem\inc;$(SolutionDir)OpenGLFramework\inc;$(ProjectDir)inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)OpenGLFramework\inc;$(ProjectDir)inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>ParticleOITPCH.h</PrecompiledHeaderFile>
     </ClCompile>
@@ -148,43 +148,46 @@
     <ProjectReference Include="..\OpenGLFramework\OpenGLFramework.vcxproj">
       <Project>{7a93678e-e40b-4ba7-b234-5acc20ea6243}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\ParticleSystem\ParticleSystem.vcxproj">
-      <Project>{91193f5e-57b2-41b8-9ea1-cb6878dcc42f}</Project>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\DirectRenderPass.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ParticleOITPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ParticleOITPCH.h</PrecompiledHeaderFile>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ParticleOITPCH.h</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="src\ParticleSystemObj.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="inc\DirectRenderPass.h" />
     <ClInclude Include="inc\ParticleOITPCH.h" />
     <ClInclude Include="inc\ParticleSystemObj.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="shaders\fs_point_sprite.glsl" />
+    <None Include="shaders\fs_stretched_sprite.glsl" />
+    <None Include="shaders\inc_rendering_shared.glsl" />
+    <None Include="shaders\vs_generic.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\boost.1.78.0\build\boost.targets" Condition="Exists('..\packages\boost.1.78.0\build\boost.targets')" />
-    <Import Project="..\packages\glew.redist.2.1.0\build\native\glew.redist.targets" Condition="Exists('..\packages\glew.redist.2.1.0\build\native\glew.redist.targets')" />
-    <Import Project="..\packages\glew.2.1.0\build\native\glew.targets" Condition="Exists('..\packages\glew.2.1.0\build\native\glew.targets')" />
-    <Import Project="..\packages\glfw.3.3.8\build\native\glfw.targets" Condition="Exists('..\packages\glfw.3.3.8\build\native\glfw.targets')" />
-    <Import Project="..\packages\glm.0.9.9.800\build\native\glm.targets" Condition="Exists('..\packages\glm.0.9.9.800\build\native\glm.targets')" />
+      <Import Project="D:\vc_packages\glew.redist.2.1.0\build\native\GLEW.redist.targets" Condition="Exists('D:\vc_packages\glew.redist.2.1.0\build\native\GLEW.redist.targets')" />
+      <Import Project="D:\vc_packages\glew.2.1.0\build\native\GLEW.targets" Condition="Exists('D:\vc_packages\glew.2.1.0\build\native\GLEW.targets')" />
+      <Import Project="D:\vc_packages\glm.0.9.9.800\build\native\glm.targets" Condition="Exists('D:\vc_packages\glm.0.9.9.800\build\native\glm.targets')" />
+      <Import Project="D:\vc_packages\boost.1.78.0\build\boost.targets" Condition="Exists('D:\vc_packages\boost.1.78.0\build\boost.targets')" />
+      <Import Project="D:\vc_packages\glfw.3.3.6\build\native\glfw.targets" Condition="Exists('D:\vc_packages\glfw.3.3.6\build\native\glfw.targets')" />
+      <Import Project="..\packages\glfw.3.3.6\build\native\glfw.targets" Condition="Exists('..\packages\glfw.3.3.6\build\native\glfw.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\boost.1.78.0\build\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost.1.78.0\build\boost.targets'))" />
-    <Error Condition="!Exists('..\packages\glew.redist.2.1.0\build\native\glew.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glew.redist.2.1.0\build\native\glew.redist.targets'))" />
-    <Error Condition="!Exists('..\packages\glew.2.1.0\build\native\glew.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glew.2.1.0\build\native\glew.targets'))" />
-    <Error Condition="!Exists('..\packages\glfw.3.3.8\build\native\glfw.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glfw.3.3.8\build\native\glfw.targets'))" />
-    <Error Condition="!Exists('..\packages\glm.0.9.9.800\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glm.0.9.9.800\build\native\glm.targets'))" />
+      <Error Condition="!Exists('D:\vc_packages\glew.redist.2.1.0\build\native\GLEW.redist.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\glew.redist.2.1.0\build\native\GLEW.redist.targets'))" />
+      <Error Condition="!Exists('D:\vc_packages\glew.2.1.0\build\native\GLEW.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\glew.2.1.0\build\native\GLEW.targets'))" />
+      <Error Condition="!Exists('D:\vc_packages\glm.0.9.9.800\build\native\glm.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\glm.0.9.9.800\build\native\glm.targets'))" />
+      <Error Condition="!Exists('D:\vc_packages\boost.1.78.0\build\boost.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\boost.1.78.0\build\boost.targets'))" />
+      <Error Condition="!Exists('D:\vc_packages\glfw.3.3.6\build\native\glfw.targets')" Text="$([System.String]::Format('$(ErrorText)', 'D:\vc_packages\glfw.3.3.6\build\native\glfw.targets'))" />
+      <Error Condition="!Exists('..\packages\glfw.3.3.6\build\native\glfw.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\glfw.3.3.6\build\native\glfw.targets'))" />
   </Target>
 </Project>
