@@ -25,8 +25,8 @@ writeonly buffer WriteIndices {
 
 //-----------------------------------------------------------------------------
 
-uniform uint uBlockWidth;
-uniform uint uMaxBlockWidth;
+uniform int uBlockWidth;
+uniform int uMaxBlockWidth;
 
 bool cmp(float a, float b) {
   return a > b;
