@@ -1,7 +1,6 @@
 #include "ParticleOITPCH.h"
 #include "ParticleSystemObj.h"
 
-
 //**************************************************************************************************
 //FUNCTION:
 void CParticleSystemObj::initV()
@@ -14,5 +13,6 @@ void CParticleSystemObj::initV()
 //FUNCTION:
 void CParticleSystemObj::updateV()
 {
-    m_pGPUPartile->update(0.05f, glm::mat4x4());
+    const float DeltaTime = App::getDeltaTime();
+    m_pGPUPartile->update(DeltaTime, glm::mat4x4());
 }

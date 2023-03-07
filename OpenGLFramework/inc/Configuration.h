@@ -15,10 +15,14 @@
 #define STORAGE_BINDING_INDICES_FIRST                    5
 #define STORAGE_BINDING_INDICES_SECOND                   6
 
+#define COUNT_STORAGE_BINDING                            7
+
 #define ATOMIC_COUNTER_BINDING_FIRST                     0
 #define ATOMIC_COUNTER_BINDING_SECOND                    1
 
-#define SPARKLE_USE_SOA_LAYOUT   FALSE
+#ifndef SPARKLE_USE_SOA_LAYOUT
+#define SPARKLE_USE_SOA_LAYOUT              FALSE
+#endif
 
 #endif
 
