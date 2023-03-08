@@ -18,6 +18,13 @@ int main()
 
         ResourceManager::registerSubGUI(std::make_shared<CCustomGUI>("CustomGui", 1));
         App::initApp();
+
+        Camera::setMainCameraPos(glm::vec3(0.0f, 20.0f, 50.0f));
+        Camera::setMainCameraFov(60.0f);
+        Camera::setMainCameraFarPlane(2000.0f);
+        Camera::setMainCameraFront(glm::vec3(0.0f, -0.5f, -1.0f));
+        Camera::setMainCameraMoveSpeed(20.0);
+
         App::updateApp();
     }
     return 0;

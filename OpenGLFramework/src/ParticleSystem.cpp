@@ -34,50 +34,11 @@ void GPUParticle::init() {
     pgm_.sort_step = std::make_shared<CShader>("../OpenGLFramework/shaders/cs_sort_step.glsl");
     pgm_.sort_final = std::make_shared<CShader>("../OpenGLFramework/shaders/cs_sort_final.glsl");
 
-
-    ///* Get uniform locations */
-    //ulocation_.emission.emitCount = GetUniformLocation(pgm_.emission, "uEmitCount");
-    //ulocation_.emission.emitterType = GetUniformLocation(pgm_.emission, "uEmitterType");
-    //ulocation_.emission.emitterPosition = GetUniformLocation(pgm_.emission, "uEmitterPosition");
-    //ulocation_.emission.emitterDirection = GetUniformLocation(pgm_.emission, "uEmitterDirection");
-    //ulocation_.emission.emitterRadius = GetUniformLocation(pgm_.emission, "uEmitterRadius");
-    //ulocation_.emission.particleMinAge = GetUniformLocation(pgm_.emission, "uParticleMinAge");
-    //ulocation_.emission.particleMaxAge = GetUniformLocation(pgm_.emission, "uParticleMaxAge");
-
-    //ulocation_.simulation.timeStep = GetUniformLocation(pgm_.simulation, "uTimeStep");
-    //ulocation_.simulation.vectorFieldSampler = GetUniformLocation(pgm_.simulation, "uVectorFieldSampler");
-    //ulocation_.simulation.bboxSize = GetUniformLocation(pgm_.simulation, "uBBoxSize");
-    //ulocation_.simulation.boundingVolume = GetUniformLocation(pgm_.simulation, "uBoundingVolume");
-    //ulocation_.simulation.scatteringFactor = GetUniformLocation(pgm_.simulation, "uScatteringFactor");
-    //ulocation_.simulation.vectorFieldFactor = GetUniformLocation(pgm_.simulation, "uVectorFieldFactor");
-    //ulocation_.simulation.curlNoiseFactor = GetUniformLocation(pgm_.simulation, "uCurlNoiseFactor");
-    //ulocation_.simulation.curlNoiseScale = GetUniformLocation(pgm_.simulation, "uCurlNoiseScale");
-    //ulocation_.simulation.velocityFactor = GetUniformLocation(pgm_.simulation, "uVelocityFactor");
-    //ulocation_.simulation.enableScattering = GetUniformLocation(pgm_.simulation, "uEnableScattering");
-    //ulocation_.simulation.enableVectorField = GetUniformLocation(pgm_.simulation, "uEnableVectorField");
-    //ulocation_.simulation.enableCurlNoise = GetUniformLocation(pgm_.simulation, "uEnableCurlNoise");
-    //ulocation_.simulation.enableVelocityControl = GetUniformLocation(pgm_.simulation, "uEnableVelocityControl");
-
+ 
     //ulocation_.calculate_dp.view = GetUniformLocation(pgm_.calculate_dp, "uViewMatrix");
 
     //ulocation_.sort_step.blockWidth = GetUniformLocation(pgm_.sort_step, "uBlockWidth");
     //ulocation_.sort_step.maxBlockWidth = GetUniformLocation(pgm_.sort_step, "uMaxBlockWidth");
-
-    //ulocation_.render_point_sprite.mvp = GetUniformLocation(pgm_.render_point_sprite, "uMVP");
-    //ulocation_.render_point_sprite.minParticleSize = GetUniformLocation(pgm_.render_point_sprite, "uMinParticleSize");
-    //ulocation_.render_point_sprite.maxParticleSize = GetUniformLocation(pgm_.render_point_sprite, "uMaxParticleSize");
-    //ulocation_.render_point_sprite.colorMode = GetUniformLocation(pgm_.render_point_sprite, "uColorMode");
-    //ulocation_.render_point_sprite.birthGradient = GetUniformLocation(pgm_.render_point_sprite, "uBirthGradient");
-    //ulocation_.render_point_sprite.deathGradient = GetUniformLocation(pgm_.render_point_sprite, "uDeathGradient");
-    //ulocation_.render_point_sprite.fadeCoefficient = GetUniformLocation(pgm_.render_point_sprite, "uFadeCoefficient");
-
-    //ulocation_.render_stretched_sprite.view = GetUniformLocation(pgm_.render_stretched_sprite, "uView");
-    //ulocation_.render_stretched_sprite.mvp = GetUniformLocation(pgm_.render_stretched_sprite, "uMVP");
-    //ulocation_.render_stretched_sprite.colorMode = GetUniformLocation(pgm_.render_stretched_sprite, "uColorMode");
-    //ulocation_.render_stretched_sprite.birthGradient = GetUniformLocation(pgm_.render_stretched_sprite, "uBirthGradient");
-    //ulocation_.render_stretched_sprite.deathGradient = GetUniformLocation(pgm_.render_stretched_sprite, "uDeathGradient");
-    //ulocation_.render_stretched_sprite.spriteStretchFactor = GetUniformLocation(pgm_.render_stretched_sprite, "uSpriteStretchFactor");
-    //ulocation_.render_stretched_sprite.fadeCoefficient = GetUniformLocation(pgm_.render_stretched_sprite, "uFadeCoefficient");
 
     /* One time uniform setting */
     pgm_.simulation->setIntUniformValue("uPerlinNoisePermutationSeed", rand());
@@ -316,9 +277,7 @@ void GPUParticle::_simulation(float const time_step) {
     {
         pgm_.simulation->setFloatUniformValue("uTimeStep", time_step);
         pgm_.simulation->setIntUniformValue("uVectorFieldSampler", 0);
-        pgm_.simulation->setIntUniformValue("uBoundingVolume", simulation_params_.bounding_volume);
-        pgm_.simulation->setFloatUniformValue("uBBoxSize", simulation_params_.bounding_volume_size);
-
+   
         pgm_.simulation->setFloatUniformValue("uScatteringFactor", simulation_params_.scattering_factor);
         pgm_.simulation->setFloatUniformValue("uVectorFieldFactor", simulation_params_.vectorfield_factor);
         pgm_.simulation->setFloatUniformValue("uCurlNoiseFactor", simulation_params_.curlnoise_factor);

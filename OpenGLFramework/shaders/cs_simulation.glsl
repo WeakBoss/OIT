@@ -22,9 +22,6 @@ uniform float uTimeStep;
 // Vector field sampler.
 uniform sampler3D uVectorFieldSampler;
 
-// Simulation volume.
-uniform int uBoundingVolume;
-uniform float uBBoxSize;
 
 uniform float uScatteringFactor;
 uniform float uVectorFieldFactor;
@@ -243,65 +240,6 @@ vec3 CalculateForces(in const TParticle p) {
   return force;
 }
 
-// ----------------------------------------------------------------------------
-
-void CollideSphere(float r, in vec3 center, inout vec3 pos, inout vec3 vel) {
-  const vec3 p = pos - center;
-
-  const float dp = dot(p, p);
-  const float r2 = r*r;
-
-  if (dp > r2) {
-    vec3 n = -p * inversesqrt(dp);
-    vel = reflect(vel, n);
-
-    pos = center - r*n;
-  }
-}
-
-void CollideBox(in vec3 corner, in vec3 center, inout vec3 pos, inout vec3 vel) {
-  vec3 p = pos - center;
-
-  if (p.x < -corner.x) {
-    p.x = -corner.x;
-    vel = reflect(vel, vec3(1.0f,0.0f,0.0f));
-  }
-
-  if (p.x > corner.x) {
-    p.x = corner.x;
-    vel = reflect(vel, vec3(-1.0f,0.0f,0.0f));
-  }
-
-  if (p.y < -corner.y) {
-    p.y = -corner.y;
-    vel = reflect(vel, vec3(0.0f,1.0f,0.0f));
-  }
-
-  if (p.y > corner.y) {
-    p.y = corner.y;
-    vel = reflect(vel, vec3(0.0f,-1.0f,0.0f));
-  }
-
-  if (p.z < -corner.z) {
-    p.z = -corner.z;
-    vel = reflect(vel, vec3(0.0f,0.0f,1.0f));
-  }
-
-  if (p.z > corner.z) {
-    p.z = corner.z;
-    vel = reflect(vel, vec3(0.0f,0.0f,-1.0f));
-  }
-
-  pos = p + center;
-}
-
-void CollisionHandling(inout vec3 pos, inout vec3 vel) {
-  const float r = 0.5f * uBBoxSize;
-
-  if (uBoundingVolume == 0) CollideSphere(r, vec3(0.0f), pos, vel);
-  else
-  if (uBoundingVolume == 1) CollideBox(vec3(r), vec3(0.0f), pos, vel);
-}
 
 // ----------------------------------------------------------------------------
 
@@ -330,9 +268,6 @@ void main() {
 
     // Integrate position.
     position = fma(velocity, dt, position);
-
-    // Handle collisions.
-    CollisionHandling(position, velocity);
 
     // Update the particle.
     UpdateParticle(p, position, velocity, age);
