@@ -170,8 +170,12 @@ bool IGUI::sliderScalarN(const std::string& vLable, hiveGraphics::EDataType vDat
 {
 	return ImGui::SliderScalarN(vLable.c_str(), static_cast<int>(vDataType), vValue, vComponentsNum, vMin, vMax);
 }
-
-
+//************************************************************************************
+//Function:
+bool IGUI::sliderFloat(const std::string& vLable, float& vioValue, float vMin, float vMax)
+{
+	return ImGui::SliderFloat(vLable.c_str(), &vioValue, vMin, vMax);
+}
 //************************************************************************************
 //Function:
 bool IGUI::sliderFloat4(const std::string& vLable, glm::vec4& vioValue, float vMin, float vMax)

@@ -32,7 +32,6 @@ namespace hiveGraphics
         float emitter_position[3] = { 20.0f, 0.0f, 0.0f };
         float emitter_direction[3] = { 0.0f, 1.0f, 0.0f };
         float emitter_radius = 10.0f;
-        SimulationVolume bounding_volume = SimulationVolume::VOLUME_SPHERE;
 
         float scattering_factor = 1.0f;
         float vectorfield_factor = 1.0f;

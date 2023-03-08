@@ -35,7 +35,7 @@ void CDirectRenderPass::updateV()
     glUseProgram(0u);
 
 
-
+    m_RenderingParameters = ResourceManager::getSharedDataByName<RenderingParameters_t>("DirectRenderSimulationParameters");
     switch (m_RenderingParameters.rendermode) {
     case RENDERMODE_STRETCHED:
         break;

@@ -45,6 +45,7 @@ public:
 	void verticalSpacing();
 	bool sliderScalar(const std::string& vLable, hiveGraphics::EDataType vDataType, void* vValue, const void* vMin, const void* vMax, const char* vFormat = nullptr);			//return true when value changed
 	bool sliderScalarN(const std::string& vLable, hiveGraphics::EDataType vDataType, int vComponentsNum, void* vValue, const void* vMin, const void* vMax);
+	bool sliderFloat(const std::string& vLable, float& vioValue, float vMin, float vMax);
 	bool sliderFloat4(const std::string& vLable, glm::vec4& vioValue, float vMin, float vMax);
 	bool verticalSilderScalar(const std::string& vLable, const glm::vec2& vSliderSize, hiveGraphics::EDataType vDataType, void* vValue, const void* vMin, const void* vMax);	//return true when value changed
 	void horizontalLine();
