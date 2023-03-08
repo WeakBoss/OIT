@@ -14,10 +14,10 @@ void CDirectRenderPass::initV()
     m_pGridObj->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
     m_pRenderGridShader = std::make_shared<CShader>("shaders/vs_grid.glsl", "shaders/fs_grid.glsl");
 
-    Camera::setMainCameraPos(glm::vec3(0.0f, 100.0f, 150.0f));
+    Camera::setMainCameraPos(glm::vec3(0.0f, 20.0f, 50.0f));
     Camera::setMainCameraFov(60.0f);
     Camera::setMainCameraFarPlane(2000.0f);
-
+    Camera::setMainCameraFront(glm::vec3(0.0f, -0.5f, -1.0f));
 }
 //**************************************************************************************************
 //FUNCTION:
@@ -30,7 +30,8 @@ void CDirectRenderPass::updateV()
     glDisable(GL_BLEND);
 
     m_pRenderGridShader->activeShader();
-    m_pRenderGridShader->setFloatUniformValue("uScaleFactor", 256.0f);
+    const SimulationParameters_t& SimulationParameters = m_pParticleSystemObj->getSimulationParameters();
+    m_pRenderGridShader->setFloatUniformValue("uScaleFactor", SimulationParameters.bounding_volume_size);
     m_pGridObj->use();
     glDrawArrays(GL_LINES, 0, m_pGridObj->getNumVertices());
     glBindVertexArray(0u);

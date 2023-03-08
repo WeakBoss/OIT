@@ -41,7 +41,11 @@ namespace hiveGraphics
         unsigned int getParticlePositionVAO() const { return vao_; }
         unsigned int getIndirectBuffer() const { return gl_indirect_buffer_id_; }
 
-        inline SimulationParameters_t& simulation_parameters()
+        void setSimulationParameters(const SimulationParameters_t& vSimulationParameters)
+        {
+            simulation_params_ = vSimulationParameters;
+        }
+        const SimulationParameters_t& getSimulationParameters() const
         {
             return simulation_params_;
         }

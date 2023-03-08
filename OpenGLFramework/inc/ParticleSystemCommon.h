@@ -6,7 +6,7 @@ using namespace glm;
 
 namespace hiveGraphics
 {
-    enum EmitterType
+    enum FRAME_DLLEXPORTS EmitterType
     {
         EMITTER_POINT,
         EMITTER_DISK,
@@ -15,7 +15,7 @@ namespace hiveGraphics
         kNumEmitterType
     };
 
-    enum SimulationVolume
+    enum FRAME_DLLEXPORTS SimulationVolume
     {
         VOLUME_SPHERE,
         VOLUME_BOX,
@@ -23,27 +23,27 @@ namespace hiveGraphics
         kNumSimulationVolume
     };
 
-    struct SimulationParameters_t
+    struct FRAME_DLLEXPORTS SimulationParameters_t
     {
         float time_step_factor = 1.0f;
-        float min_age = 50.0f;
-        float max_age = 100.0f;
+        float min_age = 0.0f;
+        float max_age = 15.0f;
         EmitterType emitter_type = EmitterType::EMITTER_SPHERE;
         float emitter_position[3] = { 0.0f, 0.0f, 0.0f };
         float emitter_direction[3] = { 0.0f, 1.0f, 0.0f };
-        float emitter_radius = 32.0f;
+        float emitter_radius = 10.0f;
         SimulationVolume bounding_volume = SimulationVolume::VOLUME_SPHERE;
-        float bounding_volume_size = 256.0f;
+        float bounding_volume_size = 1024.0f;
 
         float scattering_factor = 1.0f;
         float vectorfield_factor = 1.0f;
         float curlnoise_factor = 16.0f;
         float curlnoise_scale = 128.0f;
-        float velocity_factor = 8.0f;
+        float velocity_factor = 5.0f;
 
-        bool enable_scattering = false;
+        bool enable_scattering = true;
         bool enable_vectorfield = false;
-        bool enable_curlnoise = true;
+        bool enable_curlnoise = false;
         bool enable_velocity_control = true;
     };
 

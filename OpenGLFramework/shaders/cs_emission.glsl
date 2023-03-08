@@ -102,12 +102,6 @@ void CreateParticle(const uint gid) {
   // Velocity
   vec3 vel = uEmitterDirection;
 
-  // Age
-  // The age is set by thread groups to assure we have a number of particles
-  // factors of groupWidth, this method is safe but prevents continuous emission.
-  const float group_rand = randbuffer[gl_WorkGroupID.x];
-  // [As the threadgroup are not full, some dead particles might appears if not
-  // skipped in following stages].
   const float single_rand = randbuffer[gid];
 
   const float age = mix( uParticleMinAge, uParticleMaxAge, single_rand);

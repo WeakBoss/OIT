@@ -8,6 +8,7 @@
 #include "GUI.h"
 #include "GameObject.h"
 #include "RenderPass.h"
+#include "ParticleSystemCommon.h"
 
 #include <GLFW/glfw3.h>
 

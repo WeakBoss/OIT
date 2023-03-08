@@ -31,6 +31,9 @@
     <Filter Include="shaders\Grid">
       <UniqueIdentifier>{a0bf3c01-7652-456f-bd9e-1080def08a46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{cb6013fd-ad4a-49a6-914d-e39b18a56f06}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -48,6 +51,9 @@
     <ClCompile Include="src\Grid.cpp">
       <Filter>Grid</Filter>
     </ClCompile>
+    <ClCompile Include="src\CustomGUI.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\ParticleSystemObj.h">
@@ -61,6 +67,9 @@
     </ClInclude>
     <ClInclude Include="inc\Grid.h">
       <Filter>Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\CustomGUI.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

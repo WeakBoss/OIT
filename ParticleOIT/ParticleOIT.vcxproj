@@ -152,6 +152,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\CustomGUI.cpp" />
     <ClCompile Include="src\DirectRenderPass.cpp" />
     <ClCompile Include="src\Grid.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -162,6 +163,7 @@
     <ClCompile Include="src\ParticleSystemObj.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="inc\CustomGUI.h" />
     <ClInclude Include="inc\DirectRenderPass.h" />
     <ClInclude Include="inc\Grid.h" />
     <ClInclude Include="inc\ParticleOITPCH.h" />
