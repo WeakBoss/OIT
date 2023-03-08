@@ -6,30 +6,64 @@
 void CDirectRenderPass::initV()
 {
     m_pParticleSystemObj = std::dynamic_pointer_cast<CParticleSystemObj>(ResourceManager::getGameObjectByName("ParticleSystem"));
+    m_pParticleSystemObj->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
     m_pRenderPointSpriteShader = std::make_shared<CShader>("shaders/vs_generic.glsl", "shaders/fs_point_sprite.glsl");
     m_IndirectBuffer = m_pParticleSystemObj->getIndirectBuffer();
+
+    m_pGridObj = std::dynamic_pointer_cast<CGridObj>(ResourceManager::getGameObjectByName("Grid"));
+    m_pGridObj->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+    m_pRenderGridShader = std::make_shared<CShader>("shaders/vs_grid.glsl", "shaders/fs_grid.glsl");
+
+    Camera::setMainCameraPos(glm::vec3(0.0f, 100.0f, 150.0f));
+    Camera::setMainCameraFov(60.0f);
+    Camera::setMainCameraFarPlane(2000.0f);
+
 }
 //**************************************************************************************************
 //FUNCTION:
 void CDirectRenderPass::updateV()
 {
+    glClearColor(0.155f, 0.15f, 0.13f, 1.0f);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+
+    m_pRenderGridShader->activeShader();
+    m_pRenderGridShader->setFloatUniformValue("uScaleFactor", 256.0f);
+    m_pGridObj->use();
+    glDrawArrays(GL_LINES, 0, m_pGridObj->getNumVertices());
+    glBindVertexArray(0u);
+    glUseProgram(0u);
+
+
+
     switch (m_RenderingParameters.rendermode) {
     case RENDERMODE_STRETCHED:
-        m_pRenderPointSpriteShader->activeShader();
-       /* glUniform1f(ulocation_.render_stretched_sprite.colorMode, rendering_params_.colormode);
-        glUniform3fv(ulocation_.render_stretched_sprite.birthGradient, 1, rendering_params_.birth_gradient);
-        glUniform3fv(ulocation_.render_stretched_sprite.deathGradient, 1, rendering_params_.death_gradient);
-        glUniform1f(ulocation_.render_stretched_sprite.spriteStretchFactor, rendering_params_.stretched_factor);
-        glUniform1f(ulocation_.render_stretched_sprite.fadeCoefficient, rendering_params_.fading_factor);*/
         break;
 
     case RENDERMODE_POINTSPRITE:
+        m_pRenderPointSpriteShader->activeShader();
+        m_pRenderPointSpriteShader->setFloatUniformValue("uMinParticleSize", m_RenderingParameters.min_size);
+        m_pRenderPointSpriteShader->setFloatUniformValue("uMaxParticleSize", m_RenderingParameters.max_size);
+        m_pRenderPointSpriteShader->setFloatUniformValue("uColorMode", m_RenderingParameters.colormode);
+        m_pRenderPointSpriteShader->setFloatUniformValue("uBirthGradient", 
+            m_RenderingParameters.birth_gradient[0],
+            m_RenderingParameters.birth_gradient[1],
+            m_RenderingParameters.birth_gradient[2]);
+        m_pRenderPointSpriteShader->setFloatUniformValue("uDeathGradient",
+            m_RenderingParameters.death_gradient[0],
+            m_RenderingParameters.death_gradient[1],
+            m_RenderingParameters.death_gradient[2]);
+        m_pRenderPointSpriteShader->setFloatUniformValue("uFadeCoefficient", m_RenderingParameters.fading_factor);
+
         break;
     default:
         break;
     }
-    glClearColor(0.155f, 0.15f, 0.13f, 1.0f);
+
     glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
     glEnable(GL_PROGRAM_POINT_SIZE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 

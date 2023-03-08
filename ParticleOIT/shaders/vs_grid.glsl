@@ -4,7 +4,12 @@
 
 layout(location = 0) in vec2 inPosition;
 
-uniform mat4x4 uMVP;
+layout(std140,binding=0) uniform u_Matrices4ProjectionWorld
+{
+    mat4 u_ProjectionMatrix;
+    mat4 u_ViewMatrix;
+};
+
 uniform vec4 uGridColor = vec4(vec3(0.25f), 0.75f);
 uniform float uScaleFactor;
 
@@ -22,7 +27,7 @@ void main() {
   OUT.color.rgb = (main_axis) ? axis_color : uGridColor.rgb;
   OUT.color.a = uGridColor.a;
 
-  gl_Position = uMVP * vec4(pos, 1.0f);
+  gl_Position = u_ProjectionMatrix * u_ViewMatrix * vec4(pos, 1.0f);
 }
 
 // ----------------------------------------------------------------------------

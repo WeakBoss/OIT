@@ -32,7 +32,7 @@ enum ColorMode
 
 struct RenderingParameters_t
 {
-    RenderMode rendermode = RENDERMODE_STRETCHED;
+    RenderMode rendermode = RENDERMODE_POINTSPRITE;
     float stretched_factor = 10.0f;
     ColorMode colormode = COLORMODE_DEFAULT;
     float birth_gradient[4] = { 0.0f, 1.0f, 0.0f, 1.0f };

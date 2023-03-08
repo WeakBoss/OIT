@@ -22,6 +22,15 @@
     <Filter Include="shaders">
       <UniqueIdentifier>{bae04e2e-3652-4dc6-889b-5712adb63d9f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders\ParticleRender">
+      <UniqueIdentifier>{7e9b9504-3617-4c83-be97-adebbb2f9cdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Grid">
+      <UniqueIdentifier>{f241923b-18da-44a8-a833-d91f4ec4d7b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\Grid">
+      <UniqueIdentifier>{a0bf3c01-7652-456f-bd9e-1080def08a46}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -36,6 +45,9 @@
     <ClCompile Include="src\DirectRenderPass.cpp">
       <Filter>DirectRender</Filter>
     </ClCompile>
+    <ClCompile Include="src\Grid.cpp">
+      <Filter>Grid</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\ParticleSystemObj.h">
@@ -47,20 +59,29 @@
     <ClInclude Include="inc\DirectRenderPass.h">
       <Filter>DirectRender</Filter>
     </ClInclude>
+    <ClInclude Include="inc\Grid.h">
+      <Filter>Grid</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="shaders\fs_point_sprite.glsl">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="shaders\fs_stretched_sprite.glsl">
-      <Filter>shaders</Filter>
+      <Filter>shaders\ParticleRender</Filter>
+    </None>
+    <None Include="shaders\fs_point_sprite.glsl">
+      <Filter>shaders\ParticleRender</Filter>
     </None>
     <None Include="shaders\inc_rendering_shared.glsl">
-      <Filter>shaders</Filter>
+      <Filter>shaders\ParticleRender</Filter>
     </None>
     <None Include="shaders\vs_generic.glsl">
-      <Filter>shaders</Filter>
+      <Filter>shaders\ParticleRender</Filter>
+    </None>
+    <None Include="shaders\fs_grid.glsl">
+      <Filter>shaders\Grid</Filter>
+    </None>
+    <None Include="shaders\vs_grid.glsl">
+      <Filter>shaders\Grid</Filter>
     </None>
   </ItemGroup>
 </Project>

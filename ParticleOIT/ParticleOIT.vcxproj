@@ -153,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\DirectRenderPass.cpp" />
+    <ClCompile Include="src\Grid.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ParticleOITPCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -162,15 +163,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\DirectRenderPass.h" />
+    <ClInclude Include="inc\Grid.h" />
     <ClInclude Include="inc\ParticleOITPCH.h" />
     <ClInclude Include="inc\ParticleSystemObj.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="shaders\fs_grid.glsl" />
     <None Include="shaders\fs_point_sprite.glsl" />
     <None Include="shaders\fs_stretched_sprite.glsl" />
     <None Include="shaders\inc_rendering_shared.glsl" />
     <None Include="shaders\vs_generic.glsl" />
+    <None Include="shaders\vs_grid.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

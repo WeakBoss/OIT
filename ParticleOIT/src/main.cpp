@@ -1,16 +1,19 @@
 #include "ParticleOITPCH.h"
 #include "ParticleSystemObj.h"
 #include "DirectRenderPass.h"
+#include "Grid.h"
 int main()
 {
     
     {
         WINDOW_KEYWORD::setIsCursorDisable(false);
-        WINDOW_KEYWORD::setWindowSize(1200, 1200);
+        WINDOW_KEYWORD::setWindowSize(1536, 864);
 
         COMPONENT_CONFIG::setIsEnableGUI(true);
 
-        ResourceManager::registerGameObject(std::make_shared<CParticleSystemObj>("ParticleSystem",1));
+        ResourceManager::registerGameObject(std::make_shared<CGridObj>("Grid", 1));
+        ResourceManager::registerGameObject(std::make_shared<CParticleSystemObj>("ParticleSystem",2));
+
         ResourceManager::registerRenderPass(std::make_shared<CDirectRenderPass>("DirectRenderPass", 1));
         App::initApp();
         App::updateApp();

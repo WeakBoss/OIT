@@ -217,7 +217,6 @@
     <None Include="shaders\cs_sort_step.glsl" />
     <None Include="shaders\cs_update_args.glsl" />
     <None Include="shaders\fs_basic.glsl" />
-    <None Include="shaders\fs_grid.glsl" />
     <None Include="shaders\gs_stretched_sprite.glsl" />
     <None Include="shaders\inc_curlnoise.glsl" />
     <None Include="shaders\inc_distance_func.glsl" />
@@ -227,7 +226,6 @@
     <None Include="shaders\inc_perlin_2d.glsl" />
     <None Include="shaders\inc_perlin_3d.glsl" />
     <None Include="shaders\vs_basic.glsl" />
-    <None Include="shaders\vs_grid.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

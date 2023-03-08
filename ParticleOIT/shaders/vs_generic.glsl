@@ -6,7 +6,6 @@ layout(location=0) in vec3 position;
 layout(location=1) in vec3 velocity;
 layout(location=2) in vec2 age_info;
 
-uniform mat4 uMVP;
 layout(std140,binding=0) uniform u_Matrices4ProjectionWorld
 {
     mat4 u_ProjectionMatrix;
