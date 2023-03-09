@@ -13,8 +13,8 @@ public:
     {}
     void bind();
     void unbind();
-    void initialize(unsigned int const vNumlements);
-    void deinitialize();
+    void init(unsigned int const vNumlements);
+    void deinit();
     void generateValues();
 
 private:

@@ -10,104 +10,110 @@ namespace hiveGraphics
 {
     struct FRAME_DLLEXPORTS TIndirectValues
     {
-        unsigned int dispatch_x;
-        unsigned int dispatch_y;
-        unsigned int dispatch_z;
-        unsigned int draw_count;
-        unsigned int draw_primCount;
-        unsigned int draw_first;
-        unsigned int draw_reserved;
+        unsigned int DispatchX;
+        unsigned int DispatchY;
+        unsigned int DispatchZ;
+        unsigned int DrawCount;
+        unsigned int DrawPrimCount;
+        unsigned int DrawFirst;
+        unsigned int DrawReserved;
     };
-    class FRAME_DLLEXPORTS GPUParticle
+    class FRAME_DLLEXPORTS CParticleSystem
     {
     public:
 
-        GPUParticle() :
-            num_alive_particles_(0u),
-            pbuffer_(nullptr),
-            gl_indirect_buffer_id_(0u),
-            gl_dp_buffer_id_(0u),
-            gl_sort_indices_buffer_id_(0u),
-            vao_(0u),
-            simulated_(false),
-            enable_sorting_(false),
-            enable_vectorfield_(true)
+        CParticleSystem() :
+            m_NumAliveParticles(0u),
+ 
+            m_IndirectBuffer(0u),
+            m_DotProductBuffer(0u),
+            m_SortIndicesBuffer(0u),
+            m_VAO(0u),
+            m_IsSimulated(false),
+            m_EnableSorting(false),
+            m_EnableVectorfield(true)
         {}
+        ~CParticleSystem()
+        {
+            deinit();
+        }
         void init();
         void deinit();
+        void update(float const vDeltaTime, glm::mat4x4 const& vViewMat = glm::mat4x4());
 
-        void update(float const dt, glm::mat4x4 const& view);
+        unsigned int getParticlePositionVAO() const { return m_VAO; }
+        unsigned int getIndirectBuffer() const { return m_IndirectBuffer; }
 
-        unsigned int getParticlePositionVAO() const { return vao_; }
-        unsigned int getIndirectBuffer() const { return gl_indirect_buffer_id_; }
-
-        void setSimulationParameters(const SimulationParameters_t& vSimulationParameters)
+        void setSimulationParameters(const SSimulationParameters& vSimulationParameters)
         {
-            simulation_params_ = vSimulationParameters;
+            mSimulationParams = vSimulationParameters;
         }
-        const SimulationParameters_t& getSimulationParameters() const
+        const SSimulationParameters& getSimulationParameters() const
         {
-            return simulation_params_;
+            return mSimulationParams;
+        }
+        inline void enableSorting(bool vStatus) { m_EnableSorting = vStatus; }
+        inline void enableVectorfield(bool vStatus) { m_EnableVectorfield = vStatus; }
+
+        void addParticleType(const SSimulationParameters& vSimulationParams)
+        {
+            mSimulationParamsSet.emplace_back(std::move(vSimulationParams));
         }
 
-        inline const glm::uvec3& vectorfield_dimensions() const
-        {
-            return vectorfield_.dimensions();
-        }
-
-        inline void enable_sorting(bool status) { enable_sorting_ = status; }
-        inline void enable_vectorfield(bool status) { enable_vectorfield_ = status; }
     private:
-        unsigned int const kThreadsGroupWidth = PARTICLE_SYSTEM_KERNEL_GROUP_WIDTH;
-        unsigned int const kMaxParticleCount = MAX_NUM_PARTICLES;
-        unsigned int const kBatchEmitCount = MAX_NUM_PARTICLES_PER_BATCH;
-
-        unsigned int GetThreadsGroupCount(unsigned int const nthreads)
+        void genVBO();
+        void emission(unsigned int const vCount);
+        void simulation(float const vTimeStep);
+        void swapBuffer();
+        void sortParticles(glm::mat4x4 const& vViewMat);
+        unsigned int mGetThreadsGroupCount(unsigned int const vNumthreads)
         {
-            return (nthreads + kThreadsGroupWidth - 1u) / kThreadsGroupWidth;
+            return (vNumthreads + mThreadsGroupWidth - 1u) / mThreadsGroupWidth;
+            m_NumParticleTypes++;
         }
 
-        unsigned int FloorParticleCount(unsigned int const nparticles)
+        unsigned int mFloorParticleCount(unsigned int const vNparticles)
         {
-            return kThreadsGroupWidth * (nparticles / kThreadsGroupWidth);
+            return mThreadsGroupWidth * (vNparticles / mThreadsGroupWidth);
         }
 
-        void _setup_render();
+        
 
-        void _emission(unsigned int const count);
-        void _simulation(float const time_step);
-        void _postprocess();
-        void _sorting(glm::mat4x4 const& view);
+        unsigned int const mThreadsGroupWidth = PARTICLE_SYSTEM_KERNEL_GROUP_WIDTH;
+        unsigned int const mMaxParticleCount = MAX_NUM_PARTICLES;
+        unsigned int const mBatchEmitCount = MAX_NUM_PARTICLES_PER_BATCH;
 
-        SimulationParameters_t simulation_params_;
+        SSimulationParameters mSimulationParams;
 
-        unsigned int num_alive_particles_;              //< number of particle written and rendered on last frame.
-        AppendConsumeBuffer* pbuffer_;                  //< Append / Consume buffer for particles.
-        CRandomBuffer randbuffer_;                       //< StorageBuffer to hold random values.
-        VectorField vectorfield_;                       //< Vector field handler.
+        unsigned int m_NumParticleTypes = 0;
+        std::vector<SSimulationParameters> mSimulationParamsSet;
+
+        unsigned int m_NumAliveParticles;             
+        std::shared_ptr<AppendConsumeBuffer> m_pAppendConsumeBuffer = nullptr;                 
+        std::shared_ptr<CRandomBuffer> m_pRandBuffer = nullptr;
+        std::shared_ptr<CVectorField> m_pVectorField = nullptr;                     
 
         struct
         {
-            std::shared_ptr<CShader> emission;
-            std::shared_ptr<CShader> update_args;
-            std::shared_ptr<CShader> simulation;
-            std::shared_ptr<CShader> fill_indices;
-            std::shared_ptr<CShader> calculate_dp;
-            std::shared_ptr<CShader> sort_step;
-            std::shared_ptr<CShader> sort_final;
-            std::shared_ptr<CShader> render_point_sprite;
-            std::shared_ptr<CShader> render_stretched_sprite;
-        } pgm_;                                         //< Pipeline's shaders.
+            std::shared_ptr<CShader> Emission;
+            std::shared_ptr<CShader> UpdateArgs;
+            std::shared_ptr<CShader> Simulation;
+            std::shared_ptr<CShader> FillIndices;
+            std::shared_ptr<CShader> CalculateDp;
+            std::shared_ptr<CShader> Sort;
+            std::shared_ptr<CShader> SortFinal;
+            std::shared_ptr<CShader> RenderPointSprite;
+        } m_pComputeShaders;                                       
 
-        GLuint gl_indirect_buffer_id_;                  //< Indirect Dispatch / Draw buffer.
-        GLuint gl_dp_buffer_id_;                        //< DotProduct buffer.
-        GLuint gl_sort_indices_buffer_id_;              //< indices buffer (for sorting).
+        GLuint m_IndirectBuffer;                    
+        GLuint m_DotProductBuffer;                     
+        GLuint m_SortIndicesBuffer;              
 
-        GLuint vao_;                                    //< VAO for rendering.
+        GLuint m_VAO;                                    
 
-        bool simulated_;                                //< True if particles has been simulated.
-        bool enable_sorting_;                           //< True if back-to-front sort is enabled.
-        bool enable_vectorfield_;                       //< True if the vector field is used.
+        bool m_IsSimulated;                         
+        bool m_EnableSorting;                         
+        bool m_EnableVectorfield;                       
     };
 }
 

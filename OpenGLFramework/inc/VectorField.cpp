@@ -4,9 +4,10 @@
 #include <cstdio>
 #include <vector>
 
-
-void VectorField::initialize(unsigned int const width, unsigned int const height, unsigned int const depth) {
-    dimensions_ = glm::uvec3(width, height, depth);
+//**************************************************************************************************
+//FUNCTION:
+void CVectorField::init(unsigned int const width, unsigned int const height, unsigned int const depth) {
+    m_dimensions = glm::uvec3(width, height, depth);
 
     /// @bug
     /// Velocity fields are 3d textures where only particles in the texture volume
@@ -21,8 +22,8 @@ void VectorField::initialize(unsigned int const width, unsigned int const height
     GLint const wrap_mode = GL_CLAMP_TO_BORDER;
     GLfloat const border[4u] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
-    glGenTextures(1u, &gl_texture_id_);
-    glBindTexture(GL_TEXTURE_3D, gl_texture_id_);
+    glGenTextures(1u, &mTextureId);
+    glBindTexture(GL_TEXTURE_3D, mTextureId);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, filter_mode);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, filter_mode);
     glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, wrap_mode);
@@ -31,15 +32,17 @@ void VectorField::initialize(unsigned int const width, unsigned int const height
     glTexParameterfv(GL_TEXTURE_3D, GL_TEXTURE_BORDER_COLOR, border);
     glBindTexture(GL_TEXTURE_3D, 0u);
 }
-
-void VectorField::deinitialize() {
-    glDeleteTextures(1u, &gl_texture_id_);
+//**************************************************************************************************
+//FUNCTION:
+void CVectorField::deinit() {
+    glDeleteTextures(1u, &mTextureId);
 }
-
-void VectorField::generate_values(char const* filename) {
-    unsigned int const W = dimensions_.x;
-    unsigned int const H = dimensions_.y;
-    unsigned int const D = dimensions_.z;
+//**************************************************************************************************
+//FUNCTION:
+void CVectorField::generateValues(char const* filename) {
+    unsigned int const W = m_dimensions.x;
+    unsigned int const H = m_dimensions.y;
+    unsigned int const D = m_dimensions.z;
     float const dW = 1.0f / static_cast<float>(W);
     float const dH = 1.0f / static_cast<float>(H);
     float const dD = 1.0f / static_cast<float>(D);
@@ -73,7 +76,7 @@ void VectorField::generate_values(char const* filename) {
                     //unsigned int const index = 3u * z * (height_ * width_) + (y * width_) + x;
 
                     glm::vec3 p = glm::vec3(dx, dy, dz);
-                    glm::vec3 v = _generate_vector(p);
+                    glm::vec3 v = generateVector(p);
                     *pData++ = v.x;
                     *pData++ = v.y;
                     *pData++ = v.z;
@@ -93,14 +96,15 @@ void VectorField::generate_values(char const* filename) {
     const GLsizei iW = static_cast<GLsizei>(W); //
     const GLsizei iH = static_cast<GLsizei>(H); //
     const GLsizei iD = static_cast<GLsizei>(D); //
-    glBindTexture(GL_TEXTURE_3D, gl_texture_id_);
+    glBindTexture(GL_TEXTURE_3D, mTextureId);
     glTexStorage3D(GL_TEXTURE_3D, 1, GL_RGB32F, iW, iH, iD);
     glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, 0, iW, iH, iD, GL_RGB, GL_FLOAT, data.data());
     glBindTexture(GL_TEXTURE_3D, 0u);
 }
 
- 
-glm::vec3 VectorField::_generate_vector(glm::vec3 const& p) const {
+//**************************************************************************************************
+//FUNCTION:
+glm::vec3 CVectorField::generateVector(glm::vec3 const& p) const {
 #if  0
     float scale = 1.0f;
     float const n1 = glm::simplex(scale * p);

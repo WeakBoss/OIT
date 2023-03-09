@@ -4,7 +4,7 @@
 
 //**************************************************************************************************
 //FUNCTION:
-void CRandomBuffer::initialize(unsigned int const vNumElements) {
+void CRandomBuffer::init(unsigned int const vNumElements) {
     m_NumElements = vNumElements;
 
     glGenBuffers(1u, &m_GLRandomBuffer);
@@ -16,7 +16,7 @@ void CRandomBuffer::initialize(unsigned int const vNumElements) {
 }
 //**************************************************************************************************
 //FUNCTION:
-void CRandomBuffer::deinitialize() {
+void CRandomBuffer::deinit() {
     glDeleteBuffers(1u, &m_GLRandomBuffer);
 }
 //**************************************************************************************************

@@ -239,12 +239,6 @@
     <None Include="shaders\cs_update_args.glsl">
       <Filter>ParticleSystem\shaders</Filter>
     </None>
-    <None Include="shaders\fs_basic.glsl">
-      <Filter>ParticleSystem\shaders</Filter>
-    </None>
-    <None Include="shaders\gs_stretched_sprite.glsl">
-      <Filter>ParticleSystem\shaders</Filter>
-    </None>
     <None Include="shaders\inc_curlnoise.glsl">
       <Filter>ParticleSystem\shaders</Filter>
     </None>
@@ -264,9 +258,6 @@
       <Filter>ParticleSystem\shaders</Filter>
     </None>
     <None Include="shaders\inc_perlin_3d.glsl">
-      <Filter>ParticleSystem\shaders</Filter>
-    </None>
-    <None Include="shaders\vs_basic.glsl">
       <Filter>ParticleSystem\shaders</Filter>
     </None>
     <None Include="shaders\Common.glsl">

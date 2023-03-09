@@ -23,8 +23,9 @@ namespace hiveGraphics
         kNumSimulationVolume
     };
 
-    struct FRAME_DLLEXPORTS SimulationParameters_t
+    struct FRAME_DLLEXPORTS SSimulationParameters
     {
+        int EmitNumPerSecond = 500;
         float time_step_factor = 1.0f;
         float min_age = 0.0f;
         float max_age = 15.0f;

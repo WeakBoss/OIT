@@ -66,7 +66,7 @@ void CDirectRenderPass::updateV()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     m_pParticleSystemObj->use();
-    void const* offset = reinterpret_cast<void const*>(offsetof(TIndirectValues, draw_count));
+    void const* offset = reinterpret_cast<void const*>(offsetof(TIndirectValues, DrawCount));
     glBindBuffer(GL_DRAW_INDIRECT_BUFFER, m_IndirectBuffer);
     glDrawArraysIndirect(GL_POINTS, offset); 
     glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0u);

@@ -1,35 +1,27 @@
 #pragma once
 #include <GLM/glm.hpp>
 #include <GL/glew.h>
-class VectorField {
+class CVectorField {
 public:
-    VectorField()
-        : gl_texture_id_(0u)
+    CVectorField()
+        : mTextureId(0u)
     {}
 
-    void initialize(unsigned int const width, unsigned int const height, unsigned int const depth);
-    void deinitialize();
+    void init(unsigned int const width, unsigned int const height, unsigned int const depth);
+    void deinit();
 
     /// Generate vector datas.
     /// load them from filename if it exists, otherwise compute them and save on disk.
-    void generate_values(char const* filename);
-
-    inline const glm::uvec3& dimensions() const {
-        return dimensions_;
-    }
-
-    inline const glm::vec3& position() const {
-        return position_;
-    }
+    void generateValues(char const* filename);
 
     inline GLuint texture_id() const {
-        return gl_texture_id_;
+        return mTextureId;
     }
 
 private:
-    glm::vec3 _generate_vector(glm::vec3 const& p) const;
+    glm::uvec3 m_dimensions;
+    glm::vec3 m_position;
+    GLuint mTextureId;
 
-    glm::uvec3 dimensions_;
-    glm::vec3 position_;
-    GLuint gl_texture_id_;
+    glm::vec3 generateVector(glm::vec3 const& p) const;
 };
