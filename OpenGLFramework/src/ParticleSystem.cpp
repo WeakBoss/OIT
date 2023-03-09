@@ -8,7 +8,6 @@ void GPUParticle::init() {
     /* Assert than the number of particles will be a factor of threadGroupWidth */
     unsigned int const num_particles = FloorParticleCount(kMaxParticleCount); //
     fprintf(stderr, "[ %u particles, %u per batch ]\n", num_particles, kBatchEmitCount);
-
     /* Append/Consume Buffer */
     unsigned int const num_attrib_buffer = (sizeof(TParticle) + sizeof(glm::vec4) - 1u) / sizeof(glm::vec4); //
     pbuffer_ = new AppendConsumeBuffer(num_particles, num_attrib_buffer);
@@ -97,7 +96,7 @@ void GPUParticle::deinit() {
 
 void GPUParticle::update(const float dt, glm::mat4x4 const& view) {
     /* Max number of particles able to be spawned. */
-    unsigned int const num_dead_particles = pbuffer_->element_count() - num_alive_particles_;
+    unsigned int const num_dead_particles = FloorParticleCount(kMaxParticleCount) - num_alive_particles_;
     /* Number of particles to be emitted. */
     unsigned int const emit_count = std::min(kBatchEmitCount, num_dead_particles); //  y
     /* Simulation deltatime depends on application framerate and the user input */
