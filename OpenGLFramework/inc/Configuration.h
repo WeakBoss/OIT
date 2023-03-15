@@ -16,13 +16,13 @@
 #define STORAGE_BINDING_INDICES_FIRST                    5
 #define STORAGE_BINDING_INDICES_SECOND                   6
 
-#define COUNT_STORAGE_BINDING                            7
+#define STORAGE_SIMULATE_PARAMETER                       7
+#define STORAGE_PARTICLE_PROPORTION                      8
 
 #define ATOMIC_COUNTER_BINDING_FIRST                     0
 #define ATOMIC_COUNTER_BINDING_SECOND                    1
 
-#define SIMULATE_PARAMETER_UNIFORM                       2
-#define PARTICLE_PROPORTION_UNIFORM                      3
+
 
 #ifndef SPARKLE_USE_SOA_LAYOUT
 #define SPARKLE_USE_SOA_LAYOUT              FALSE

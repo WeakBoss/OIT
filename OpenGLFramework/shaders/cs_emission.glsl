@@ -4,12 +4,7 @@
 #include "inc_math.glsl"
 
  
-//layout(location=1) uniform uint uEmitterType;
-//layout(location=2) uniform vec3 uEmitterPosition;
-//layout(location=3) uniform vec3 uEmitterDirection;
-//layout(location=4) uniform float uEmitterRadius;
-//layout(location=5) uniform float uParticleMinAge;
-//layout(location=6) uniform float uParticleMaxAge;
+ 
 
 uint EmitterType;
 vec3 EmitterPosition;
@@ -20,49 +15,33 @@ float ParticleMaxAge;
 
 layout(location=0) uniform uint uEmitCount;
 layout(location=1) uniform uint uNumParticleType;
+layout(location=2) uniform uint uRandomuint;
+
 
 layout(binding = ATOMIC_COUNTER_BINDING_FIRST)
 uniform atomic_uint write_count;
 
-#if SPARKLE_USE_SOA_LAYOUT
-
-layout(std430, binding = STORAGE_BINDING_PARTICLE_POSITIONS_A)
-writeonly buffer PositionBufferA {
-  vec4 positions[];
-};
-
-layout(std430, binding = STORAGE_BINDING_PARTICLE_VELOCITIES_A)
-writeonly buffer VelocityBufferA {
-  vec4 velocities[];
-};
-
-layout(std430, binding = STORAGE_BINDING_PARTICLE_ATTRIBUTES_A)
-writeonly buffer AttributeBufferA {
-  vec4 attributes[];
-};
-
-#else
-
+ 
 layout(std430, binding = STORAGE_BINDING_PARTICLES_FIRST)
 writeonly buffer ParticleBufferA {
   TParticle particles[];
 };
 
-#endif
+ 
 
 layout(std430, binding = STORAGE_BINDING_RANDOM_VALUES)
 readonly buffer RandomBuffer {
   float randbuffer[];
 };
 
-layout(std140, binding = SIMULATE_PARAMETER_UNIFORM)
-uniform SimulationParameters{
-   SSimulationParameters simulationParameters[2];
+layout(std430, binding = STORAGE_SIMULATE_PARAMETER)
+readonly buffer SimulationParameters{
+   SSimulationParameters simulationParameters[];
 };
 
-layout(std140, binding = PARTICLE_PROPORTION_UNIFORM)
-uniform ParticleProportion{
-   float particleProportion[2];
+layout(std430, binding = STORAGE_PARTICLE_PROPORTION)
+readonly buffer ParticleProportion{
+   float particleProportion[];
 };
 
  
@@ -85,27 +64,23 @@ void PushParticle(in vec3 position,
   // Emit particle id.
   const uint id = atomicCounterIncrement(write_count);
 
-#if SPARKLE_USE_SOA_LAYOUT
-  positions[id]  = vec4(position, 1.0f);
-  velocities[id] = vec4(velocity, 0.0f);
-  attributes[id] = vec4(age, age, 0.0f, uintBitsToFloat(id));
-#else
+ 
   TParticle p;
   p.position = vec4(position, 1.0f);
   p.velocity = vec4(velocity, 0.0f);
   p.start_age = age;
   p.age = age;
-  p.id = id;
   p.type = type;
+  p.id = id;
   particles[id] = p;
-#endif
+ 
 }
 
 // ----------------------------------------------------------------------------
 
 void CreateParticle(const uint gid, const uint type) {
   // Random vector.
-  const uint rid = 3u * gid;
+  const uint rid = 3u * gid + uRandomuint;
   const vec3 rn = vec3(randbuffer[rid], randbuffer[rid+1u], randbuffer[rid+2u]);
 
   // Position

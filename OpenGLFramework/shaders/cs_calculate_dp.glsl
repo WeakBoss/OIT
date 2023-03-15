@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 /*
  * Compute in view space the dot product between particles position and the

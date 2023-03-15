@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 /* Sorting step of the bitonic-sort algorithm.
  * This kernel sort indices by comparing dot products together.

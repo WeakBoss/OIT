@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 /* Fill a buffer with continuous indices, used in the sorting stage. */
 

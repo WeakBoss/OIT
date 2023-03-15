@@ -43,8 +43,23 @@ namespace hiveGraphics
 
         unsigned int getParticlePositionVAO() const { return m_VAO; }
         unsigned int getIndirectBuffer() const { return m_IndirectBuffer; }
+        unsigned int getNumAliveParticles() const { return m_NumAliveParticles; }
 
-        void setSimulationParameters(const SSimulationParameters& vSimulationParameters,int vIndex)
+
+        inline void enableSorting(bool vStatus) { m_EnableSorting = vStatus; }
+        inline void enableVectorfield(bool vStatus) { m_EnableVectorfield = vStatus; }
+
+        void addParticleType(const SSimulationParameters& vSimulationParams)
+        {
+            m_SimulationParamsSet.push_back(vSimulationParams);
+            m_NumParticleTypes++;
+        }
+        void addParticleType(const std::vector<SSimulationParameters>& vSimulationParamsSet)
+        {
+            for (auto SP : vSimulationParamsSet)
+                addParticleType(SP);
+        }
+        void setSimulationParameters(const SSimulationParameters& vSimulationParameters, int vIndex)
         {
             if (vIndex < m_SimulationParamsSet.size())
             {
@@ -54,16 +69,12 @@ namespace hiveGraphics
             else
                 _WARNING(true, "vIndex out of range");
         }
- 
-        inline void enableSorting(bool vStatus) { m_EnableSorting = vStatus; }
-        inline void enableVectorfield(bool vStatus) { m_EnableVectorfield = vStatus; }
-
-        void addParticleType(const SSimulationParameters& vSimulationParams)
+        void setSimulationParameters(const std::vector<SSimulationParameters>& vSimulationParameters)
         {
-            m_SimulationParamsSet.emplace_back(std::move(vSimulationParams));
-            m_NumParticleTypes++;
+            for (int i = 0; i < vSimulationParameters.size(); i++)
+                setSimulationParameters(vSimulationParameters[i], i);
+                 
         }
-
     private:
         void genVBO();
         void emission(const float vDeltaTime);
@@ -93,8 +104,8 @@ namespace hiveGraphics
         unsigned int m_NumParticleTypes = 0;
         std::vector<SSimulationParameters> m_SimulationParamsSet;
         bool m_IsSimulationParamsUpdated = true;
-        GLuint m_SimulationParamsUniformBuffer;
-        GLuint m_ParticleProportionUniformBuffer;
+        GLuint m_SimulationParamsBuffer;
+        GLuint m_ParticleProportionBuffer;
 
         unsigned int m_NumAliveParticles;             
         std::shared_ptr<AppendConsumeBuffer> m_pAppendConsumeBuffer = nullptr;                 

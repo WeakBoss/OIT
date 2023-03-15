@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 // ============================================================================
 
@@ -28,6 +28,7 @@ float uVectorFieldFactor;
 float uCurlNoiseFactor;
 float uCurlNoiseScale;
 float uVelocityFactor;
+float uTimeStepFactor;
 
 uint uEnableScattering;
 uint uEnableVectorField;
@@ -44,38 +45,7 @@ uniform atomic_uint write_count;
 
 // ----------------------------------------------------------------------------
 
-#if SPARKLE_USE_SOA_LAYOUT
-
-// READ
-layout(std430, binding = STORAGE_BINDING_PARTICLE_POSITIONS_A)
-readonly buffer PositionBufferA {
-  vec4 read_positions[];
-};
-layout(std430, binding = STORAGE_BINDING_PARTICLE_VELOCITIES_A)
-readonly buffer VelocityBufferA {
-  vec4 read_velocities[];
-};
-layout(std430, binding = STORAGE_BINDING_PARTICLE_ATTRIBUTES_A)
-readonly buffer AttributeBufferA {
-  vec4 read_attributes[];
-};
-
-// WRITE
-layout(std430, binding = STORAGE_BINDING_PARTICLE_POSITIONS_B)
-writeonly buffer PositionBufferB {
-  vec4 write_positions[];
-};
-layout(std430, binding = STORAGE_BINDING_PARTICLE_VELOCITIES_B)
-writeonly buffer VelocityBufferB {
-  vec4 write_velocities[];
-};
-layout(std430, binding = STORAGE_BINDING_PARTICLE_ATTRIBUTES_B)
-writeonly buffer AttributeBufferB {
-  vec4 write_attributes[];
-};
-
-#else
-
+ 
 // READ
 layout(std430, binding = STORAGE_BINDING_PARTICLES_FIRST)
 readonly buffer ParticleBufferA {
@@ -87,17 +57,16 @@ layout(std430, binding = STORAGE_BINDING_PARTICLES_SECOND)
 writeonly buffer ParticleBufferB {
   TParticle write_particles[];
 };
-
-#endif  // SPARKLE_USE_SOA_LAYOUT
+ 
 
 layout(std430, binding = STORAGE_BINDING_RANDOM_VALUES)
 readonly buffer RandomBuffer {
   float randbuffer[];
 };
 
-layout(std140, binding = SIMULATE_PARAMETER_UNIFORM)
-uniform SimulationParameters{
-   SSimulationParameters simulationParameters[2];
+layout(std430, binding = STORAGE_SIMULATE_PARAMETER)
+readonly buffer SimulationParameters{
+   SSimulationParameters simulationParameters[];
 };
 
 // ----------------------------------------------------------------------------
@@ -108,17 +77,9 @@ TParticle PopParticle() {
 
   TParticle p;
 
-#if SPARKLE_USE_SOA_LAYOUT
-  p.position   = read_positions[index];
-  p.velocity   = read_velocities[index];
-  vec4 attribs = read_attributes[index];
-
-  p.start_age  = attribs.x;
-  p.age        = attribs.y;
-  p.id         = floatBitsToUint(attribs.w);
-#else
+ 
   p = read_particles[index];
-#endif
+ 
 
   return p;
 }
@@ -126,19 +87,15 @@ TParticle PopParticle() {
 void PushParticle(in TParticle p) {
   const uint index = atomicCounterIncrement(write_count);
 
-#if SPARKLE_USE_SOA_LAYOUT
-  write_positions[index]  = p.position;
-  write_velocities[index] = p.velocity;
-  write_attributes[index] = vec4(p.start_age, p.age, 0.0f, uintBitsToFloat(p.id));
-#else
+ 
   write_particles[index] = p;
-#endif
+ 
 }
 
 // ----------------------------------------------------------------------------
 
 float GetUpdatedAge(in const TParticle p) {
-  return clamp(p.age - uTimeStep, 0.0f, p.start_age);
+  return clamp(p.age - uTimeStep * uTimeStepFactor, 0.0f, p.start_age);
 }
 
 // ----------------------------------------------------------------------------
@@ -260,6 +217,7 @@ void main() {
     uCurlNoiseFactor = simulationParameters[Type].curlnoise_factor;
     uCurlNoiseScale = simulationParameters[Type].curlnoise_scale;
     uVelocityFactor = simulationParameters[Type].vectorfield_factor;
+    uTimeStepFactor = simulationParameters[Type].time_step_factor;
 
     uEnableScattering = simulationParameters[Type].enable_scattering;
     uEnableVectorField = simulationParameters[Type].enable_vectorfield;
@@ -273,7 +231,7 @@ void main() {
     vec3 force = CalculateForces(p);
 
     // Integrations vectors.
-    const vec3 dt = vec3(uTimeStep);
+    const vec3 dt = vec3(uTimeStep) * uTimeStepFactor;
     vec3 velocity = p.velocity.xyz;
     vec3 position = p.position.xyz;
 

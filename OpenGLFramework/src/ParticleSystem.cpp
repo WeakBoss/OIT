@@ -18,6 +18,7 @@ void CParticleSystem::init() {
 
     m_pRandBuffer = std::make_shared<CRandomBuffer>();
     m_pRandBuffer->init(num_randvalues);
+    m_pRandBuffer->generateValues();
 
     /* VectorField generator */
     if (m_EnableVectorfield) {
@@ -76,26 +77,30 @@ void CParticleSystem::init() {
     glBufferStorage(GL_SHADER_STORAGE_BUFFER, sort_indices_buffer_size, nullptr, 0);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
 
-    //m_SimulationParamsUniformBuffer
+    //m_SimulationParamsBuffer
     
     if (0 == m_NumParticleTypes)
     {
         _WARNING(true, "m_NumParticleTypes = 0");
         addParticleType(SSimulationParameters());
     }
-    glGenBuffers(1u, &m_SimulationParamsUniformBuffer);
-    glBindBuffer(GL_UNIFORM_BUFFER, m_SimulationParamsUniformBuffer);
-    glBufferStorage(GL_UNIFORM_BUFFER, sizeof(SSimulationParameters) * m_NumParticleTypes, nullptr, GL_MAP_WRITE_BIT);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0u);
+    glGenBuffers(1u, &m_SimulationParamsBuffer);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_SimulationParamsBuffer);
+    glBufferStorage(GL_SHADER_STORAGE_BUFFER, sizeof(SSimulationParameters) * m_NumParticleTypes, nullptr, GL_MAP_WRITE_BIT);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
 
-    //m_ParticleProportionUniformBuffer
-    glGenBuffers(1u, &m_ParticleProportionUniformBuffer);
-    glBindBuffer(GL_UNIFORM_BUFFER, m_ParticleProportionUniformBuffer);
-    glBufferStorage(GL_UNIFORM_BUFFER, sizeof(float) * m_NumParticleTypes, nullptr, GL_MAP_WRITE_BIT);
-    glBindBuffer(GL_UNIFORM_BUFFER, 0u);
+    //m_ParticleProportionBuffer
+    glGenBuffers(1u, &m_ParticleProportionBuffer);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ParticleProportionBuffer);
+    glBufferStorage(GL_SHADER_STORAGE_BUFFER, sizeof(float) * m_NumParticleTypes, nullptr, GL_MAP_WRITE_BIT);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
 
     /* Setup rendering buffers */
     genVBO();
+
+
+
+
 }
 
 //**************************************************************************************************
@@ -111,7 +116,7 @@ void CParticleSystem::deinit() {
     glDeleteBuffers(1u, &m_IndirectBuffer);
     glDeleteBuffers(1u, &m_DotProductBuffer);
     glDeleteBuffers(1u, &m_SortIndicesBuffer);
-    glDeleteBuffers(1u, &m_SimulationParamsUniformBuffer);
+    glDeleteBuffers(1u, &m_SimulationParamsBuffer);
     glDeleteVertexArrays(1u, &m_VAO);
 }
 
@@ -120,7 +125,7 @@ void CParticleSystem::deinit() {
 void CParticleSystem::update(const float vDeltaTime, glm::mat4x4 const& vViewMat) {
  
     /* Update random buffer with new values */
-    m_pRandBuffer->generateValues();
+ 
 
     m_pAppendConsumeBuffer->bindAttributes();
     m_pAppendConsumeBuffer->bindAtomics();
@@ -146,6 +151,8 @@ void CParticleSystem::update(const float vDeltaTime, glm::mat4x4 const& vViewMat
 
     /* PostProcess stage */
     swapBuffer();
+
+ 
 }
 
 //**************************************************************************************************
@@ -247,6 +254,7 @@ void CParticleSystem::emission(const float vDeltaTime) {
     
     m_pComputeShaders.Emission->setuIntUniformValue("uEmitCount", EmitNum);
     m_pComputeShaders.Emission->setuIntUniformValue("uNumParticleType", m_NumParticleTypes);
+    m_pComputeShaders.Emission->setuIntUniformValue("uRandomuint", m_pRandBuffer->getRandomInt(0,100));
     //m_pComputeShaders.Emission->setuIntUniformValue("uEmitterType",static_cast<unsigned int>( mSimulationParams.emitter_type));
     //m_pComputeShaders.Emission->setFloatUniformValue("uEmitterPosition", 
     //    mSimulationParams.emitter_position[0],
@@ -449,12 +457,12 @@ void CParticleSystem::bindSimulationParameters()
 {
     if (m_IsSimulationParamsUpdated)
     {
-        glBindBuffer(GL_UNIFORM_BUFFER, m_SimulationParamsUniformBuffer);
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_SimulationParamsBuffer);
         SSimulationParameters* pSP = reinterpret_cast<SSimulationParameters*>(
-            glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(SSimulationParameters) * m_NumParticleTypes, GL_MAP_WRITE_BIT));
+            glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(SSimulationParameters) * m_NumParticleTypes, GL_MAP_WRITE_BIT));
         std::memcpy(pSP, m_SimulationParamsSet.data(), sizeof(SSimulationParameters) * m_NumParticleTypes);
-        glUnmapBuffer(GL_UNIFORM_BUFFER);
-        glBindBuffer(GL_UNIFORM_BUFFER, 0u);
+        glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
         //
         unsigned int TotalEmitNumPerSecond = 0u;
         std::for_each(m_SimulationParamsSet.begin(), m_SimulationParamsSet.end(),
@@ -466,26 +474,26 @@ void CParticleSystem::bindSimulationParameters()
         for (int i = 1; i < m_NumParticleTypes; i++)
             ParticleProportion[i] += ParticleProportion[i - 1];
 
-        glBindBuffer(GL_UNIFORM_BUFFER, m_ParticleProportionUniformBuffer);
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ParticleProportionBuffer);
         float* pProportion = reinterpret_cast<float*>(
-            glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(float) * m_NumParticleTypes, GL_MAP_WRITE_BIT));
+            glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(float) * m_NumParticleTypes, GL_MAP_WRITE_BIT));
         std::memcpy(pProportion, ParticleProportion.data(), sizeof(float) * m_NumParticleTypes);
-        glUnmapBuffer(GL_UNIFORM_BUFFER);
-        glBindBuffer(GL_UNIFORM_BUFFER, 0u);
+        glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
 
         m_IsSimulationParamsUpdated = false;
     }
 
-    glBindBufferBase(GL_UNIFORM_BUFFER, PARTICLE_PROPORTION_UNIFORM, m_ParticleProportionUniformBuffer);
-    glBindBufferBase(GL_UNIFORM_BUFFER, SIMULATE_PARAMETER_UNIFORM, m_SimulationParamsUniformBuffer);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, STORAGE_PARTICLE_PROPORTION, m_ParticleProportionBuffer);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, STORAGE_SIMULATE_PARAMETER, m_SimulationParamsBuffer);
    
 }
 //**************************************************************************************************
 //FUNCTION:
 void  CParticleSystem::unbindSimulationParameters()
 {
-    glBindBufferBase(GL_UNIFORM_BUFFER, SIMULATE_PARAMETER_UNIFORM, 0u);
-    glBindBufferBase(GL_UNIFORM_BUFFER, PARTICLE_PROPORTION_UNIFORM, 0u);
+    glBindBufferBase(GL_UNIFORM_BUFFER, STORAGE_SIMULATE_PARAMETER, 0u);
+    glBindBufferBase(GL_UNIFORM_BUFFER, STORAGE_PARTICLE_PROPORTION, 0u);
 }
 
 //**************************************************************************************************

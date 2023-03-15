@@ -15,6 +15,7 @@ public:
 private:
 	std::shared_ptr<CParticleSystemObj> m_pParticleSystemObj = nullptr;
 	std::shared_ptr<CGridObj> m_pGridObj = nullptr;
-	SSimulationParameters m_SimulationParameters;
+	std::vector<SSimulationParameters> m_SimulationParametersSet;
+
 	RenderingParameters_t m_RenderingParameters;
 };

@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 in VDataBlock {
   vec4 color;

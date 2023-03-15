@@ -19,7 +19,24 @@ public:
     {
         m_pGPUPartile->setSimulationParameters(vSimulationParameters,vIndex);
     }
+    void setSimulationParameters(const std::vector<SSimulationParameters>& vSimulationParameters)
+    {
+        m_pGPUPartile->setSimulationParameters(vSimulationParameters);
+    }
+    void addParticleType(const SSimulationParameters& vSimulationParams)
+    {
+        m_pGPUPartile->addParticleType(vSimulationParams);
+    }
+    void addParticleType(const std::vector<SSimulationParameters>& vSimulationParamsSet)
+    {
+        m_pGPUPartile->addParticleType(vSimulationParamsSet);
+    }
+    unsigned int getNumAliveParticles()
+    {
+        return m_pGPUPartile->getNumAliveParticles();
+    }
 private:
     GLuint m_VAO;
     std::shared_ptr<hiveGraphics::CParticleSystem> m_pGPUPartile;
+    std::vector<SSimulationParameters> m_SimulationParametersSet;
 };
