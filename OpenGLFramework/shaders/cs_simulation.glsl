@@ -23,16 +23,16 @@ uniform float uTimeStep;
 uniform sampler3D uVectorFieldSampler;
 
 
-uniform float uScatteringFactor;
-uniform float uVectorFieldFactor;
-uniform float uCurlNoiseFactor;
-uniform float uCurlNoiseScale;
-uniform float uVelocityFactor;
+float uScatteringFactor;
+float uVectorFieldFactor;
+float uCurlNoiseFactor;
+float uCurlNoiseScale;
+float uVelocityFactor;
 
-uniform bool uEnableScattering;
-uniform bool uEnableVectorField;
-uniform bool uEnableCurlNoise;
-uniform bool uEnableVelocityControl;
+uint uEnableScattering;
+uint uEnableVectorField;
+uint uEnableCurlNoise;
+uint uEnableVelocityControl;
 
 // ----------------------------------------------------------------------------
 
@@ -95,6 +95,11 @@ readonly buffer RandomBuffer {
   float randbuffer[];
 };
 
+layout(std140, binding = SIMULATE_PARAMETER_UNIFORM)
+uniform SimulationParameters{
+   SSimulationParameters simulationParameters[2];
+};
+
 // ----------------------------------------------------------------------------
 
 TParticle PopParticle() {
@@ -150,7 +155,7 @@ void UpdateParticle(inout TParticle p,
 // ----------------------------------------------------------------------------
 
 vec3 CalculateScattering() {
-  if (!uEnableScattering) {
+  if (uEnableScattering == 0u) {
     return vec3(0.0f);
   }
   const uint gid = gl_GlobalInvocationID.x;
@@ -204,7 +209,7 @@ vec3 CalculateTargetMesh(in const TParticle p) {
 // ----------------------------------------------------------------------------
 
 vec3 CalculateVectorField(in const TParticle p) {
-  if (!uEnableVectorField) {
+  if (uEnableVectorField == 0u) {
     return vec3(0.0f);
   }
 
@@ -218,7 +223,7 @@ vec3 CalculateVectorField(in const TParticle p) {
 // ----------------------------------------------------------------------------
 
 vec3 CalculateCurlNoise(in const TParticle p) {
-  if (!uEnableCurlNoise) {
+  if (uEnableCurlNoise == 0u) {
     return vec3(0.0f);
   }
   vec3 curl_velocity = compute_curl(p.position.xyz * uCurlNoiseScale);
@@ -246,7 +251,20 @@ vec3 CalculateForces(in const TParticle p) {
 layout(local_size_x = PARTICLE_SYSTEM_KERNEL_GROUP_WIDTH) in;
 void main() {
   // Local copy of the particle.
-  TParticle p = PopParticle();
+   TParticle p = PopParticle();
+
+   uint Type = p.type;
+
+    uScatteringFactor = simulationParameters[Type].scattering_factor;
+    uVectorFieldFactor = simulationParameters[Type].vectorfield_factor;;
+    uCurlNoiseFactor = simulationParameters[Type].curlnoise_factor;
+    uCurlNoiseScale = simulationParameters[Type].curlnoise_scale;
+    uVelocityFactor = simulationParameters[Type].vectorfield_factor;
+
+    uEnableScattering = simulationParameters[Type].enable_scattering;
+    uEnableVectorField = simulationParameters[Type].enable_vectorfield;
+    uEnableCurlNoise = simulationParameters[Type].enable_curlnoise;
+    uEnableVelocityControl = simulationParameters[Type].enable_velocity_control;
 
   float age = GetUpdatedAge(p);
 
@@ -262,7 +280,7 @@ void main() {
     // Integrate velocity.
     velocity = fma(force, dt, velocity);
 
-    if (uEnableVelocityControl) {
+    if (uEnableVelocityControl == 1u) {
       velocity = uVelocityFactor * normalize(velocity);
     }
 

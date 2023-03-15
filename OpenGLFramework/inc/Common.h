@@ -9,6 +9,7 @@
 namespace hiveGraphics
 {
 #ifdef _DEBUG
+	#define _WRONG(condition, response) if(condition) { std::clog << response << std::endl;assert(true);}
 	#define _WARNING(condition, response) if(condition) {std::clog << response << std::endl;}
 #else
 	#define _WARNING(condition, response) ((void)0)

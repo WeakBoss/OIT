@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestCases", "TestCases", "{
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestCase_001(ComputerShader)", "TestCases\TestCase_001(ComputerShader)\TestCase_001(ComputerShader).vcxproj", "{FD978F1D-CB7B-472B-A52E-CF6628D3D21E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestCase_002(GetParticleType)", "TestCases\TestCase_002(GetParticleType)\TestCase_002(GetParticleType).vcxproj", "{CCBDB0C6-9EB5-4739-B0A2-3FC1C0ABF5DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -43,12 +45,21 @@ Global
 		{FD978F1D-CB7B-472B-A52E-CF6628D3D21E}.Release|x64.Build.0 = Release|x64
 		{FD978F1D-CB7B-472B-A52E-CF6628D3D21E}.Release|x86.ActiveCfg = Release|Win32
 		{FD978F1D-CB7B-472B-A52E-CF6628D3D21E}.Release|x86.Build.0 = Release|Win32
+		{CCBDB0C6-9EB5-4739-B0A2-3FC1C0ABF5DA}.Debug|x64.ActiveCfg = Debug|x64
+		{CCBDB0C6-9EB5-4739-B0A2-3FC1C0ABF5DA}.Debug|x64.Build.0 = Debug|x64
+		{CCBDB0C6-9EB5-4739-B0A2-3FC1C0ABF5DA}.Debug|x86.ActiveCfg = Debug|Win32
+		{CCBDB0C6-9EB5-4739-B0A2-3FC1C0ABF5DA}.Debug|x86.Build.0 = Debug|Win32
+		{CCBDB0C6-9EB5-4739-B0A2-3FC1C0ABF5DA}.Release|x64.ActiveCfg = Release|x64
+		{CCBDB0C6-9EB5-4739-B0A2-3FC1C0ABF5DA}.Release|x64.Build.0 = Release|x64
+		{CCBDB0C6-9EB5-4739-B0A2-3FC1C0ABF5DA}.Release|x86.ActiveCfg = Release|Win32
+		{CCBDB0C6-9EB5-4739-B0A2-3FC1C0ABF5DA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{FD978F1D-CB7B-472B-A52E-CF6628D3D21E} = {AA590073-B242-4F78-AF3C-9BD9A04E55F1}
+		{CCBDB0C6-9EB5-4739-B0A2-3FC1C0ABF5DA} = {AA590073-B242-4F78-AF3C-9BD9A04E55F1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FB6E43EE-01EA-4030-A9C3-F601093FACD1}

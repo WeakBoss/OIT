@@ -7,7 +7,7 @@ using namespace hiveGraphics;
 //FUNCTION:
 void CParticleSystem::init() {
     /* Assert than the number of particles will be a factor of threadGroupWidth */
-    unsigned int const num_particles = mFloorParticleCount(mMaxParticleCount); //
+    unsigned int const num_particles = mFloorParticleCount(m_MaxParticleCount); //
     /* Append/Consume Buffer */
     unsigned int const num_attrib_buffer = (sizeof(TParticle) + sizeof(glm::vec4) - 1u) / sizeof(glm::vec4); //
     m_pAppendConsumeBuffer = std::make_shared<AppendConsumeBuffer>(num_particles, num_attrib_buffer);
@@ -60,7 +60,7 @@ void CParticleSystem::init() {
     /* Storage buffers */
 
     // The parallel nature of the sorting algorithm needs power of two sized buffer.
-    unsigned int const sort_buffer_max_count = GetClosestPowerOfTwo(mMaxParticleCount); //
+    unsigned int const sort_buffer_max_count = GetClosestPowerOfTwo(m_MaxParticleCount); //
 
     // DotProducts buffer.
     glGenBuffers(1u, &m_DotProductBuffer);
@@ -74,8 +74,25 @@ void CParticleSystem::init() {
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_SortIndicesBuffer);
     GLuint const sort_indices_buffer_size = 2u * sort_buffer_max_count * sizeof(GLuint);
     glBufferStorage(GL_SHADER_STORAGE_BUFFER, sort_indices_buffer_size, nullptr, 0);
-
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
+
+    //m_SimulationParamsUniformBuffer
+    
+    if (0 == m_NumParticleTypes)
+    {
+        _WARNING(true, "m_NumParticleTypes = 0");
+        addParticleType(SSimulationParameters());
+    }
+    glGenBuffers(1u, &m_SimulationParamsUniformBuffer);
+    glBindBuffer(GL_UNIFORM_BUFFER, m_SimulationParamsUniformBuffer);
+    glBufferStorage(GL_UNIFORM_BUFFER, sizeof(SSimulationParameters) * m_NumParticleTypes, nullptr, GL_MAP_WRITE_BIT);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0u);
+
+    //m_ParticleProportionUniformBuffer
+    glGenBuffers(1u, &m_ParticleProportionUniformBuffer);
+    glBindBuffer(GL_UNIFORM_BUFFER, m_ParticleProportionUniformBuffer);
+    glBufferStorage(GL_UNIFORM_BUFFER, sizeof(float) * m_NumParticleTypes, nullptr, GL_MAP_WRITE_BIT);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0u);
 
     /* Setup rendering buffers */
     genVBO();
@@ -94,6 +111,7 @@ void CParticleSystem::deinit() {
     glDeleteBuffers(1u, &m_IndirectBuffer);
     glDeleteBuffers(1u, &m_DotProductBuffer);
     glDeleteBuffers(1u, &m_SortIndicesBuffer);
+    glDeleteBuffers(1u, &m_SimulationParamsUniformBuffer);
     glDeleteVertexArrays(1u, &m_VAO);
 }
 
@@ -101,42 +119,29 @@ void CParticleSystem::deinit() {
 //FUNCTION:
 void CParticleSystem::update(const float vDeltaTime, glm::mat4x4 const& vViewMat) {
  
-    unsigned int const num_dead_particles = mFloorParticleCount(mMaxParticleCount) - m_NumAliveParticles;
- 
-    unsigned int const emit_count = std::min(mBatchEmitCount, num_dead_particles); //  y
- 
-    float const time_step = vDeltaTime * mSimulationParams.time_step_factor;
-
-    //unsigned int EmitNum = 0;
-    //for (SSimulationParameters& SP : mSimulationParamsSet)
-    //{
-    //    SP
-    //    EmitNum += static_cast<unsigned int>(SP.EmitNumPerSecond * vDeltaTime);
-    //}
-    //EmitNum = std::min(EmitNum, std::min(mBatchEmitCount, num_dead_particles));
-
     /* Update random buffer with new values */
     m_pRandBuffer->generateValues();
 
     m_pAppendConsumeBuffer->bindAttributes();
+    m_pAppendConsumeBuffer->bindAtomics();
+    m_pRandBuffer->bind();
+    bindSimulationParameters();
     {
-        m_pAppendConsumeBuffer->bindAtomics();
-        m_pRandBuffer->bind();
-        {
-            /* Emission stage : write in buffer A */
-            emission(emit_count);
+        /* Emission stage : write in buffer A */
+        emission(vDeltaTime);
 
-            /* Simulation stage : read buffer A, write buffer B */
-            simulation(time_step);
-        }
-        m_pRandBuffer->unbind();
-        m_pAppendConsumeBuffer->unbindAtomics();
-
-        /* Sort particles for alpha-blending. */
-        if (m_EnableSorting && m_IsSimulated) {
-            sortParticles(vViewMat);
-        }
+        /* Simulation stage : read buffer A, write buffer B */
+        simulation(vDeltaTime);
     }
+    m_pRandBuffer->unbind();
+    m_pAppendConsumeBuffer->unbindAtomics();
+    unbindSimulationParameters();
+
+    /* Sort particles for alpha-blending. */
+    if (m_EnableSorting && m_IsSimulated) {
+        sortParticles(vViewMat);
+    }
+
     m_pAppendConsumeBuffer->unbindAttributes();
 
     /* PostProcess stage */
@@ -231,38 +236,38 @@ void CParticleSystem::genVBO() {
 
 //**************************************************************************************************
 //FUNCTION:
-void CParticleSystem::emission(const unsigned int vCount) {
-    /* Emit only if a minimum count is reached. */
-    if (!vCount) {
+void CParticleSystem::emission(const float vDeltaTime) {
+    
+    const unsigned int EmitNum = getBatchEmitNum(vDeltaTime);
+    if (!EmitNum) {
         return;
     }
-    if (vCount < mBatchEmitCount) {
-        //return;
-    }
-    //fprintf(stderr, "> %7u particles to emit.\n", count);
-    m_pComputeShaders.Emission->activeShader();
-    m_pComputeShaders.Emission->setIntUniformValue("uEmitCount", vCount);
-    m_pComputeShaders.Emission->setIntUniformValue("uEmitterType", mSimulationParams.emitter_type);
-    m_pComputeShaders.Emission->setFloatUniformValue("uEmitterPosition", 
-        mSimulationParams.emitter_position[0],
-        mSimulationParams.emitter_position[1],
-        mSimulationParams.emitter_position[2]);
-    m_pComputeShaders.Emission->setFloatUniformValue("uEmitterDirection",
-        mSimulationParams.emitter_direction[0],
-        mSimulationParams.emitter_direction[1],
-        mSimulationParams.emitter_direction[2]);
-    m_pComputeShaders.Emission->setFloatUniformValue("uEmitterRadius", mSimulationParams.emitter_radius);
-    m_pComputeShaders.Emission->setFloatUniformValue("uParticleMinAge", mSimulationParams.min_age);
-    m_pComputeShaders.Emission->setFloatUniformValue("uParticleMaxAge", mSimulationParams.max_age);
 
-    unsigned int const nGroups = mGetThreadsGroupCount(vCount);
+    m_pComputeShaders.Emission->activeShader();
+    
+    m_pComputeShaders.Emission->setuIntUniformValue("uEmitCount", EmitNum);
+    m_pComputeShaders.Emission->setuIntUniformValue("uNumParticleType", m_NumParticleTypes);
+    //m_pComputeShaders.Emission->setuIntUniformValue("uEmitterType",static_cast<unsigned int>( mSimulationParams.emitter_type));
+    //m_pComputeShaders.Emission->setFloatUniformValue("uEmitterPosition", 
+    //    mSimulationParams.emitter_position[0],
+    //    mSimulationParams.emitter_position[1],
+    //    mSimulationParams.emitter_position[2]);
+    //m_pComputeShaders.Emission->setFloatUniformValue("uEmitterDirection",
+    //    mSimulationParams.emitter_direction[0],
+    //    mSimulationParams.emitter_direction[1],
+    //    mSimulationParams.emitter_direction[2]);
+    //m_pComputeShaders.Emission->setFloatUniformValue("uEmitterRadius", mSimulationParams.emitter_radius);
+    //m_pComputeShaders.Emission->setFloatUniformValue("uParticleMinAge", mSimulationParams.min_age);
+    //m_pComputeShaders.Emission->setFloatUniformValue("uParticleMaxAge", mSimulationParams.max_age);
+
+    unsigned int const nGroups = mGetThreadsGroupCount(EmitNum);
     glDispatchCompute(nGroups, 1u, 1u);
     glUseProgram(0u);
 
     glMemoryBarrier(GL_ATOMIC_COUNTER_BARRIER_BIT | GL_SHADER_STORAGE_BARRIER_BIT);
 
     /* Number of particles expected to be simulated. */
-    m_NumAliveParticles += vCount;
+    m_NumAliveParticles += EmitNum;
 
 }
 
@@ -296,17 +301,17 @@ void CParticleSystem::simulation(float const vTimeStep) {
         m_pComputeShaders.Simulation->setFloatUniformValue("uTimeStep", vTimeStep);
         m_pComputeShaders.Simulation->setIntUniformValue("uVectorFieldSampler", 0);
    
-        m_pComputeShaders.Simulation->setFloatUniformValue("uScatteringFactor", mSimulationParams.scattering_factor);
-        m_pComputeShaders.Simulation->setFloatUniformValue("uVectorFieldFactor", mSimulationParams.vectorfield_factor);
-        m_pComputeShaders.Simulation->setFloatUniformValue("uCurlNoiseFactor", mSimulationParams.curlnoise_factor);
-        const float inv_curlnoise_scale = 1.0f / mSimulationParams.curlnoise_scale;
-        m_pComputeShaders.Simulation->setFloatUniformValue("uCurlNoiseScale", inv_curlnoise_scale);
-        m_pComputeShaders.Simulation->setFloatUniformValue("uVelocityFactor", mSimulationParams.velocity_factor);
+        //m_pComputeShaders.Simulation->setFloatUniformValue("uScatteringFactor", mSimulationParams.scattering_factor);
+        //m_pComputeShaders.Simulation->setFloatUniformValue("uVectorFieldFactor", mSimulationParams.vectorfield_factor);
+        //m_pComputeShaders.Simulation->setFloatUniformValue("uCurlNoiseFactor", mSimulationParams.curlnoise_factor);
+        //const float inv_curlnoise_scale = 1.0f / mSimulationParams.curlnoise_scale;
+        //m_pComputeShaders.Simulation->setFloatUniformValue("uCurlNoiseScale", inv_curlnoise_scale);
+        //m_pComputeShaders.Simulation->setFloatUniformValue("uVelocityFactor", mSimulationParams.velocity_factor);
 
-        m_pComputeShaders.Simulation->setIntUniformValue("uEnableScattering", mSimulationParams.enable_scattering);
-        m_pComputeShaders.Simulation->setIntUniformValue("uEnableVectorField", mSimulationParams.enable_vectorfield);
-        m_pComputeShaders.Simulation->setIntUniformValue("uEnableCurlNoise", mSimulationParams.enable_curlnoise);
-        m_pComputeShaders.Simulation->setIntUniformValue("uEnableVelocityControl", mSimulationParams.enable_velocity_control);
+        //m_pComputeShaders.Simulation->setIntUniformValue("uEnableScattering", mSimulationParams.enable_scattering);
+        //m_pComputeShaders.Simulation->setIntUniformValue("uEnableVectorField", mSimulationParams.enable_vectorfield);
+        //m_pComputeShaders.Simulation->setIntUniformValue("uEnableCurlNoise", mSimulationParams.enable_curlnoise);
+        //m_pComputeShaders.Simulation->setIntUniformValue("uEnableVelocityControl", mSimulationParams.enable_velocity_control);
 
         glBindBuffer(GL_DISPATCH_INDIRECT_BUFFER, m_IndirectBuffer);
         glDispatchComputeIndirect(0);
@@ -436,4 +441,63 @@ void CParticleSystem::swapBuffer() {
     glCopyNamedBufferSubData(
         m_pAppendConsumeBuffer->getFirstAtomicBufferId(), m_IndirectBuffer, 0u, offsetof(TIndirectValues, DrawCount), sizeof(GLuint)
     );
+}
+
+//**************************************************************************************************
+//FUNCTION:
+void CParticleSystem::bindSimulationParameters()
+{
+    if (m_IsSimulationParamsUpdated)
+    {
+        glBindBuffer(GL_UNIFORM_BUFFER, m_SimulationParamsUniformBuffer);
+        SSimulationParameters* pSP = reinterpret_cast<SSimulationParameters*>(
+            glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(SSimulationParameters) * m_NumParticleTypes, GL_MAP_WRITE_BIT));
+        std::memcpy(pSP, m_SimulationParamsSet.data(), sizeof(SSimulationParameters) * m_NumParticleTypes);
+        glUnmapBuffer(GL_UNIFORM_BUFFER);
+        glBindBuffer(GL_UNIFORM_BUFFER, 0u);
+        //
+        unsigned int TotalEmitNumPerSecond = 0u;
+        std::for_each(m_SimulationParamsSet.begin(), m_SimulationParamsSet.end(),
+            [&TotalEmitNumPerSecond](auto SP) {TotalEmitNumPerSecond += SP.EmitNumPerSecond; });
+
+        std::vector<float> ParticleProportion;
+        for (SSimulationParameters& SP : m_SimulationParamsSet)
+            ParticleProportion.push_back(1.0f * SP.EmitNumPerSecond / TotalEmitNumPerSecond);
+        for (int i = 1; i < m_NumParticleTypes; i++)
+            ParticleProportion[i] += ParticleProportion[i - 1];
+
+        glBindBuffer(GL_UNIFORM_BUFFER, m_ParticleProportionUniformBuffer);
+        float* pProportion = reinterpret_cast<float*>(
+            glMapBufferRange(GL_UNIFORM_BUFFER, 0, sizeof(float) * m_NumParticleTypes, GL_MAP_WRITE_BIT));
+        std::memcpy(pProportion, ParticleProportion.data(), sizeof(float) * m_NumParticleTypes);
+        glUnmapBuffer(GL_UNIFORM_BUFFER);
+        glBindBuffer(GL_UNIFORM_BUFFER, 0u);
+
+        m_IsSimulationParamsUpdated = false;
+    }
+
+    glBindBufferBase(GL_UNIFORM_BUFFER, PARTICLE_PROPORTION_UNIFORM, m_ParticleProportionUniformBuffer);
+    glBindBufferBase(GL_UNIFORM_BUFFER, SIMULATE_PARAMETER_UNIFORM, m_SimulationParamsUniformBuffer);
+   
+}
+//**************************************************************************************************
+//FUNCTION:
+void  CParticleSystem::unbindSimulationParameters()
+{
+    glBindBufferBase(GL_UNIFORM_BUFFER, SIMULATE_PARAMETER_UNIFORM, 0u);
+    glBindBufferBase(GL_UNIFORM_BUFFER, PARTICLE_PROPORTION_UNIFORM, 0u);
+}
+
+//**************************************************************************************************
+//FUNCTION:
+unsigned int CParticleSystem::getBatchEmitNum(const float vDeltaTime)
+{
+    unsigned int const num_dead_particles = mFloorParticleCount(m_MaxParticleCount) - m_NumAliveParticles;
+    unsigned int EmitNum = 0;
+    for (SSimulationParameters& SP : m_SimulationParamsSet)
+    {
+        EmitNum += static_cast<unsigned int>(SP.EmitNumPerSecond * vDeltaTime);
+    }
+    EmitNum = std::min(EmitNum, std::min(m_MaxBatchEmitCount, num_dead_particles));
+    return EmitNum;
 }

@@ -4,7 +4,8 @@
 
 #define MAX_NUM_PARTICLES   (1u << 18u)
 #define PARTICLE_SYSTEM_KERNEL_GROUP_WIDTH       (512u)
-#define MAX_NUM_PARTICLES_PER_BATCH std::max(256u, (MAX_NUM_PARTICLES >> 4u));
+#define MAX_NUM_PARTICLES_PER_BATCH std::max(256u, (MAX_NUM_PARTICLES >> 4u))
+
 
 #define STORAGE_BINDING_PARTICLES_FIRST                  0
 #define STORAGE_BINDING_PARTICLES_SECOND                 1
@@ -19,6 +20,9 @@
 
 #define ATOMIC_COUNTER_BINDING_FIRST                     0
 #define ATOMIC_COUNTER_BINDING_SECOND                    1
+
+#define SIMULATE_PARAMETER_UNIFORM                       2
+#define PARTICLE_PROPORTION_UNIFORM                      3
 
 #ifndef SPARKLE_USE_SOA_LAYOUT
 #define SPARKLE_USE_SOA_LAYOUT              FALSE

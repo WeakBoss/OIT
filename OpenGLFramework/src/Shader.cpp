@@ -282,6 +282,62 @@ GLvoid CShader::setIntUniformValue(int vUniformId, GLint v0, GLint v1, GLint v2,
 
 //************************************************************************************
 //Function:
+GLvoid CShader::setuIntUniformValue(const std::string& vUniformName, GLuint v0) const
+{
+	glUniform1ui(glGetUniformLocation(m_ShaderProgram, vUniformName.c_str()), v0);
+}
+
+//************************************************************************************
+//Function:
+GLvoid CShader::setuIntUniformValue(const std::string& vUniformName, GLuint v0, GLuint v1) const
+{
+	glUniform2ui(glGetUniformLocation(m_ShaderProgram, vUniformName.c_str()), v0, v1);
+}
+
+//************************************************************************************
+//Function:
+GLvoid CShader::setuIntUniformValue(const std::string& vUniformName, GLuint v0, GLuint v1, GLuint v2) const
+{
+	glUniform3ui(glGetUniformLocation(m_ShaderProgram, vUniformName.c_str()), v0, v1, v2);
+}
+
+//************************************************************************************
+//Function:
+GLvoid CShader::setuIntUniformValue(const std::string& vUniformName, GLuint v0, GLuint v1, GLuint v2, GLuint v3) const
+{
+	glUniform4ui(glGetUniformLocation(m_ShaderProgram, vUniformName.c_str()), v0, v1, v2, v3);
+}
+
+//************************************************************************************
+//Function:
+GLvoid CShader::setuIntUniformValue(int vUniformId, GLuint v0) const
+{
+	glUniform1ui(vUniformId, v0);
+}
+
+//************************************************************************************
+//Function:
+GLvoid CShader::setuIntUniformValue(int vUniformId, GLuint v0, GLuint v1) const
+{
+	glUniform2ui(vUniformId, v0, v1);
+}
+
+//************************************************************************************
+//Function:
+GLvoid CShader::setuIntUniformValue(int vUniformId, GLuint v0, GLuint v1, GLuint v2) const
+{
+	glUniform3ui(vUniformId, v0, v1, v2);
+}
+
+//************************************************************************************
+//Function:
+GLvoid CShader::setuIntUniformValue(int vUniformId, GLuint v0, GLuint v1, GLuint v2, GLuint v3) const
+{
+	glUniform4ui(vUniformId, v0, v1, v2, v3);
+}
+
+//************************************************************************************
+//Function:
 GLvoid CShader::setFloatUniformValue(const std::string& vUniformName, GLfloat v0) const
 {
 	glUniform1f(glGetUniformLocation(m_ShaderProgram, vUniformName.c_str()), v0);

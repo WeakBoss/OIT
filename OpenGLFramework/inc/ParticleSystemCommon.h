@@ -6,7 +6,7 @@ using namespace glm;
 
 namespace hiveGraphics
 {
-    enum FRAME_DLLEXPORTS EmitterType
+    enum class FRAME_DLLEXPORTS EmitterType :unsigned int
     {
         EMITTER_POINT,
         EMITTER_DISK,
@@ -15,7 +15,7 @@ namespace hiveGraphics
         kNumEmitterType
     };
 
-    enum FRAME_DLLEXPORTS SimulationVolume
+    enum class FRAME_DLLEXPORTS SimulationVolume :unsigned int
     {
         VOLUME_SPHERE,
         VOLUME_BOX,
@@ -25,25 +25,28 @@ namespace hiveGraphics
 
     struct FRAME_DLLEXPORTS SSimulationParameters
     {
-        int EmitNumPerSecond = 500;
+        glm::vec4 emitter_position = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+        glm::vec4 emitter_direction = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+
+        unsigned int EmitNumPerSecond = 3000;
         float time_step_factor = 1.0f;
         float min_age = 0.0f;
         float max_age = 15.0f;
-        EmitterType emitter_type = EmitterType::EMITTER_SPHERE;
-        float emitter_position[3] = { 20.0f, 0.0f, 0.0f };
-        float emitter_direction[3] = { 0.0f, 1.0f, 0.0f };
-        float emitter_radius = 10.0f;
 
+        EmitterType emitter_type = EmitterType::EMITTER_SPHERE;
+        float emitter_radius = 10.0f;
         float scattering_factor = 1.0f;
         float vectorfield_factor = 1.0f;
+
         float curlnoise_factor = 16.0f;
         float curlnoise_scale = 128.0f;
         float velocity_factor = 5.0f;
+        float padding = 0.0f;
 
-        bool enable_scattering = true;
-        bool enable_vectorfield = false;
-        bool enable_curlnoise = false;
-        bool enable_velocity_control = true;
+        unsigned int enable_scattering = 1u;  //由于C++与GPU中的bool对不齐，所以用uint代替
+        unsigned int enable_vectorfield = 0u;
+        unsigned int enable_curlnoise = 0u;
+        unsigned int enable_velocity_control = 1u;
     };
 
 
@@ -53,7 +56,7 @@ namespace hiveGraphics
         vec4 velocity;
         float start_age;
         float age;
-        float _padding0;
+        uint type;
         uint id;
     };
 

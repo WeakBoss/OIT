@@ -17,7 +17,43 @@ struct TParticle
   vec4 velocity;
   float start_age;
   float age;
-  float _padding0;//删掉_padding会导致出问题，可能是因为GPU内部的对齐和CPU不一致造成的
+  uint type; 
   uint id;
+
+  /* GPU                                            CPU(8)
+  * basealignment       aligned offset              basealignment       aligned offset
+    16                  0                           16                  0
+    16                  16                          16                  16
+    4                   32                          4                   32
+    4                   36                          4                   36
+    4                   40                          4                   40
+    4                   44                          4                   44
+  */
+};
+
+struct  SSimulationParameters
+{
+    vec4 emitter_position;
+    vec4 emitter_direction;
+
+    unsigned int EmitNumPerSecond;
+    float time_step_factor ;
+    float min_age;
+    float max_age;
+
+    unsigned int emitter_type ;
+    float emitter_radius ;
+    float scattering_factor;
+    float vectorfield_factor;
+
+    float curlnoise_factor;
+    float curlnoise_scale;
+    float velocity_factor;
+    float padding;
+
+    unsigned int enable_scattering;  //由于C++与GPU中的bool对不齐，所以用uint代替
+    unsigned int enable_vectorfield;
+    unsigned int enable_curlnoise ;
+    unsigned int enable_velocity_control;
 };
 #endif

@@ -29,6 +29,15 @@ public:
 	GLvoid setIntUniformValue(int vUniformId, GLint v0, GLint v1, GLint v2) const;
 	GLvoid setIntUniformValue(int vUniformId, GLint v0, GLint v1, GLint v2, GLint v3) const;
 	
+	GLvoid setuIntUniformValue(const std::string& vUniformName, GLuint v0) const;
+	GLvoid setuIntUniformValue(const std::string& vUniformName, GLuint v0, GLuint v1) const;
+	GLvoid setuIntUniformValue(const std::string& vUniformName, GLuint v0, GLuint v1, GLuint v2) const;
+	GLvoid setuIntUniformValue(const std::string& vUniformName, GLuint v0, GLuint v1, GLuint v2, GLuint v3) const;
+	GLvoid setuIntUniformValue(int vUniformId, GLuint v0) const;
+	GLvoid setuIntUniformValue(int vUniformId, GLuint v0, GLuint v1) const;
+	GLvoid setuIntUniformValue(int vUniformId, GLuint v0, GLuint v1, GLuint v2) const;
+	GLvoid setuIntUniformValue(int vUniformId, GLuint v0, GLuint v1, GLuint v2, GLuint v3) const;
+
 	GLvoid setFloatUniformValue(const std::string& vUniformName, GLfloat v0) const;
 	GLvoid setFloatUniformValue(const std::string& vUniformName, GLfloat v0, GLfloat v1) const;
 	GLvoid setFloatUniformValue(const std::string& vUniformName, GLfloat v0, GLfloat v1, GLfloat v2) const;

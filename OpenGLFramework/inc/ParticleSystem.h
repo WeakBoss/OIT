@@ -44,54 +44,64 @@ namespace hiveGraphics
         unsigned int getParticlePositionVAO() const { return m_VAO; }
         unsigned int getIndirectBuffer() const { return m_IndirectBuffer; }
 
-        void setSimulationParameters(const SSimulationParameters& vSimulationParameters)
+        void setSimulationParameters(const SSimulationParameters& vSimulationParameters,int vIndex)
         {
-            mSimulationParams = vSimulationParameters;
+            if (vIndex < m_SimulationParamsSet.size())
+            {
+                m_IsSimulationParamsUpdated = true;
+                m_SimulationParamsSet[vIndex] = vSimulationParameters;
+            }
+            else
+                _WARNING(true, "vIndex out of range");
         }
-        const SSimulationParameters& getSimulationParameters() const
-        {
-            return mSimulationParams;
-        }
+ 
         inline void enableSorting(bool vStatus) { m_EnableSorting = vStatus; }
         inline void enableVectorfield(bool vStatus) { m_EnableVectorfield = vStatus; }
 
         void addParticleType(const SSimulationParameters& vSimulationParams)
         {
-            mSimulationParamsSet.emplace_back(std::move(vSimulationParams));
+            m_SimulationParamsSet.emplace_back(std::move(vSimulationParams));
+            m_NumParticleTypes++;
         }
 
     private:
         void genVBO();
-        void emission(unsigned int const vCount);
+        void emission(const float vDeltaTime);
         void simulation(float const vTimeStep);
         void swapBuffer();
         void sortParticles(glm::mat4x4 const& vViewMat);
+        void bindSimulationParameters();
+        void unbindSimulationParameters();
+        unsigned int getBatchEmitNum(const float vDeltaTime);
+
         unsigned int mGetThreadsGroupCount(unsigned int const vNumthreads)
         {
-            return (vNumthreads + mThreadsGroupWidth - 1u) / mThreadsGroupWidth;
-            m_NumParticleTypes++;
+            return (vNumthreads + m_ThreadsGroupWidth - 1u) / m_ThreadsGroupWidth;
         }
 
         unsigned int mFloorParticleCount(unsigned int const vNparticles)
         {
-            return mThreadsGroupWidth * (vNparticles / mThreadsGroupWidth);
+            return m_ThreadsGroupWidth * (vNparticles / m_ThreadsGroupWidth);
         }
 
         
 
-        unsigned int const mThreadsGroupWidth = PARTICLE_SYSTEM_KERNEL_GROUP_WIDTH;
-        unsigned int const mMaxParticleCount = MAX_NUM_PARTICLES;
-        unsigned int const mBatchEmitCount = MAX_NUM_PARTICLES_PER_BATCH;
-
-        SSimulationParameters mSimulationParams;
+        unsigned int const m_ThreadsGroupWidth = PARTICLE_SYSTEM_KERNEL_GROUP_WIDTH;
+        unsigned int const m_MaxParticleCount = MAX_NUM_PARTICLES;
+        unsigned int const m_MaxBatchEmitCount = MAX_NUM_PARTICLES_PER_BATCH;
 
         unsigned int m_NumParticleTypes = 0;
-        std::vector<SSimulationParameters> mSimulationParamsSet;
+        std::vector<SSimulationParameters> m_SimulationParamsSet;
+        bool m_IsSimulationParamsUpdated = true;
+        GLuint m_SimulationParamsUniformBuffer;
+        GLuint m_ParticleProportionUniformBuffer;
 
         unsigned int m_NumAliveParticles;             
         std::shared_ptr<AppendConsumeBuffer> m_pAppendConsumeBuffer = nullptr;                 
         std::shared_ptr<CRandomBuffer> m_pRandBuffer = nullptr;
         std::shared_ptr<CVectorField> m_pVectorField = nullptr;                     
+
+   
 
         struct
         {

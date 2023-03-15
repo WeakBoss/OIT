@@ -15,13 +15,9 @@ public:
     void updateV() override;
     void use()const { glBindVertexArray(m_VAO); }
     unsigned int getIndirectBuffer() const { return m_pGPUPartile->getIndirectBuffer();}
-    void setSimulationParameters(const SSimulationParameters& vSimulationParameters)
+    void setSimulationParameters(const SSimulationParameters& vSimulationParameters, int vIndex)
     {
-        m_pGPUPartile->setSimulationParameters(vSimulationParameters);
-    }
-    const SSimulationParameters& getSimulationParameters() const
-    {
-        return m_pGPUPartile->getSimulationParameters();
+        m_pGPUPartile->setSimulationParameters(vSimulationParameters,vIndex);
     }
 private:
     GLuint m_VAO;
