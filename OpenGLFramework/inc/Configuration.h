@@ -3,8 +3,8 @@
 
 
 #define MAX_NUM_PARTICLES   (1u << 18u)
-#define PARTICLE_SYSTEM_KERNEL_GROUP_WIDTH       (512u)
-#define MAX_NUM_PARTICLES_PER_BATCH std::max(256u, (MAX_NUM_PARTICLES >> 4u))
+#define PARTICLE_SYSTEM_KERNEL_GROUP_WIDTH       (256u) //16*16         待发射数量达到256才会一次性发射，因此若发射速率太小，调小此参数
+#define MAX_NUM_PARTICLES_PER_BATCH             std::max(256u, (MAX_NUM_PARTICLES >> 4u))
 
 
 #define STORAGE_BINDING_PARTICLES_FIRST                  0

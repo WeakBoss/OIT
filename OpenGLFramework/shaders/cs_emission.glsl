@@ -47,7 +47,7 @@ readonly buffer ParticleProportion{
  
 uint getParticleType(uint vId)
 {
-   const float single_rand = randbuffer[vId];
+   const float single_rand = randbuffer[vId + uRandomuint];
    uint particle_type=0;
    for(uint i=0; i<uNumParticleType-1; i++)
    {

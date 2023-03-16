@@ -23,6 +23,7 @@ writeonly buffer IndirectArgs {
   uint draw_primCount;
   uint draw_first;
   uint draw_reserved;
+  unsigned int Padding;
 };
 
 layout(local_size_x = 1u) in;
@@ -33,5 +34,5 @@ void main() {
   /// @note
   /// not the real value (one frame of accuracy lost), but way cheaper than using
   /// device-host sync with glCopyNamedBufferSubData in postprocess stage.
-  draw_count = num_particles;
+  //draw_count = num_particles;
 }

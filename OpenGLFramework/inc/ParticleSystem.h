@@ -14,10 +14,18 @@ namespace hiveGraphics
         unsigned int DispatchY;
         unsigned int DispatchZ;
         unsigned int DrawCount;
-        unsigned int DrawPrimCount;
+        unsigned int DrawPrimCount;  
         unsigned int DrawFirst;
         unsigned int DrawReserved;
+        unsigned int Padding;
     };
+    //struct DrawArraysIndirectCommand {
+    //    GLuint count;
+    //    GLuint instanceCount;  1
+    //    GLuint first;   0
+    //    GLuint baseInstance;  0
+    //};
+
     class FRAME_DLLEXPORTS CParticleSystem
     {
     public:
@@ -53,6 +61,7 @@ namespace hiveGraphics
         {
             m_SimulationParamsSet.push_back(vSimulationParams);
             m_NumParticleTypes++;
+            m_TotalEmitNumPerSecond += vSimulationParams.EmitNumPerSecond;
         }
         void addParticleType(const std::vector<SSimulationParameters>& vSimulationParamsSet)
         {
@@ -85,21 +94,20 @@ namespace hiveGraphics
         void unbindSimulationParameters();
         unsigned int getBatchEmitNum(const float vDeltaTime);
 
-        unsigned int mGetThreadsGroupCount(unsigned int const vNumthreads)
+        unsigned int GetThreadsGroupCount(unsigned int const vNumthreads)
         {
             return (vNumthreads + m_ThreadsGroupWidth - 1u) / m_ThreadsGroupWidth;
         }
 
-        unsigned int mFloorParticleCount(unsigned int const vNparticles)
+        unsigned int FloorParticleCount(unsigned int const vNparticles)
         {
             return m_ThreadsGroupWidth * (vNparticles / m_ThreadsGroupWidth);
         }
 
-        
-
         unsigned int const m_ThreadsGroupWidth = PARTICLE_SYSTEM_KERNEL_GROUP_WIDTH;
-        unsigned int const m_MaxParticleCount = MAX_NUM_PARTICLES;
-        unsigned int const m_MaxBatchEmitCount = MAX_NUM_PARTICLES_PER_BATCH;
+        unsigned int const m_MaxParticleCount = FloorParticleCount(MAX_NUM_PARTICLES);
+        unsigned int const m_MaxEmitCountPerBatch = MAX_NUM_PARTICLES_PER_BATCH;
+
 
         unsigned int m_NumParticleTypes = 0;
         std::vector<SSimulationParameters> m_SimulationParamsSet;
@@ -107,7 +115,8 @@ namespace hiveGraphics
         GLuint m_SimulationParamsBuffer;
         GLuint m_ParticleProportionBuffer;
 
-        unsigned int m_NumAliveParticles;             
+        unsigned int m_NumAliveParticles = 0;;
+        unsigned int m_TotalEmitNumPerSecond = 0;
         std::shared_ptr<AppendConsumeBuffer> m_pAppendConsumeBuffer = nullptr;                 
         std::shared_ptr<CRandomBuffer> m_pRandBuffer = nullptr;
         std::shared_ptr<CVectorField> m_pVectorField = nullptr;                     

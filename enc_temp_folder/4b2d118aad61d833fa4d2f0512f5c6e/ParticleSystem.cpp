@@ -289,7 +289,7 @@ void CParticleSystem::simulation(float const vTimeStep) {
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, STORAGE_BINDING_INDIRECT_ARGS, 0u);
 
     /* Synchronize the indirect argument buffer */
-    glMemoryBarrier(GL_COMMAND_BARRIER_BIT);  // 屏障后通过Draw*indrect命令从缓冲区对象获取的命令数据将反映屏障前着色器写入的数据。
+    glMemoryBarrier(GL_ATOMIC_COUNTER_BARRIER_BIT | GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);  // 屏障后通过Draw*indrect命令从缓冲区对象获取的命令数据将反映屏障前着色器写入的数据。
 
     /* Simulation Kernel */
     if (m_EnableVectorfield) {
@@ -424,12 +424,13 @@ void CParticleSystem::swapBuffer() {
             m_pAppendConsumeBuffer->swapStorage();
         }
     }
-
+    glMemoryBarrier(GL_ATOMIC_COUNTER_BARRIER_BIT | GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);
     /* Copy the number of alive particles to the indirect buffer for drawing. */
     /// @note We use the update_args kernel instead, loosing 1 frame of accuracy.
     glCopyNamedBufferSubData(
         m_pAppendConsumeBuffer->getFirstAtomicBufferId(), m_IndirectBuffer, 0u, offsetof(TIndirectValues, DrawCount), sizeof(GLuint)
     );
+    glMemoryBarrier(GL_ATOMIC_COUNTER_BARRIER_BIT | GL_SHADER_STORAGE_BARRIER_BIT | GL_BUFFER_UPDATE_BARRIER_BIT);
 }
 
 //**************************************************************************************************
