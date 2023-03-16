@@ -110,7 +110,7 @@ layout(local_size_x = PARTICLE_SYSTEM_KERNEL_GROUP_WIDTH) in;
 void main() {
   const uint gid = gl_GlobalInvocationID.x;
 
-  if (gid < uEmitCount) {
+  if (gid < uEmitCount) {   
 
     uint Type = getParticleType(gid);
     EmitterType = simulationParameters[Type].emitter_type;

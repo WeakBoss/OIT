@@ -18,6 +18,7 @@
 
 // Time integration step.
 uniform float uTimeStep;
+uniform uint  uNumAliveParticles;
 
 // Vector field sampler.
 uniform sampler3D uVectorFieldSampler;
@@ -71,18 +72,6 @@ readonly buffer SimulationParameters{
 
 // ----------------------------------------------------------------------------
 
-TParticle PopParticle() {
-  const uint index = gl_GlobalInvocationID.x;
-  atomicCounterDecrement(read_count);
-
-  TParticle p;
-
- 
-  p = read_particles[index];
- 
-
-  return p;
-}
 
 void PushParticle(in TParticle p) {
   const uint index = atomicCounterIncrement(write_count);
@@ -207,48 +196,54 @@ vec3 CalculateForces(in const TParticle p) {
 
 layout(local_size_x = PARTICLE_SYSTEM_KERNEL_GROUP_WIDTH) in;
 void main() {
-  // Local copy of the particle.
-   TParticle p = PopParticle();
 
-   uint Type = p.type;
+   const uint index = gl_GlobalInvocationID.x;
 
-    uScatteringFactor = simulationParameters[Type].scattering_factor;
-    uVectorFieldFactor = simulationParameters[Type].vectorfield_factor;;
-    uCurlNoiseFactor = simulationParameters[Type].curlnoise_factor;
-    uCurlNoiseScale = simulationParameters[Type].curlnoise_scale;
-    uVelocityFactor = simulationParameters[Type].vectorfield_factor;
-    uTimeStepFactor = simulationParameters[Type].time_step_factor;
+   if(index < uNumAliveParticles)
+   {
+        atomicCounterDecrement(read_count);
+        TParticle p = read_particles[index];
 
-    uEnableScattering = simulationParameters[Type].enable_scattering;
-    uEnableVectorField = simulationParameters[Type].enable_vectorfield;
-    uEnableCurlNoise = simulationParameters[Type].enable_curlnoise;
-    uEnableVelocityControl = simulationParameters[Type].enable_velocity_control;
+        uint Type = p.type;
 
-  float age = GetUpdatedAge(p);
+        uScatteringFactor = simulationParameters[Type].scattering_factor;
+        uVectorFieldFactor = simulationParameters[Type].vectorfield_factor;;
+        uCurlNoiseFactor = simulationParameters[Type].curlnoise_factor;
+        uCurlNoiseScale = simulationParameters[Type].curlnoise_scale;
+        uVelocityFactor = simulationParameters[Type].vectorfield_factor;
+        uTimeStepFactor = simulationParameters[Type].time_step_factor;
 
-  if (age > 0.0f) {
-    // Calculate external forces.
-    vec3 force = CalculateForces(p);
+        uEnableScattering = simulationParameters[Type].enable_scattering;
+        uEnableVectorField = simulationParameters[Type].enable_vectorfield;
+        uEnableCurlNoise = simulationParameters[Type].enable_curlnoise;
+        uEnableVelocityControl = simulationParameters[Type].enable_velocity_control;
 
-    // Integrations vectors.
-    const vec3 dt = vec3(uTimeStep) * uTimeStepFactor;
-    vec3 velocity = p.velocity.xyz;
-    vec3 position = p.position.xyz;
+        float age = GetUpdatedAge(p);
 
-    // Integrate velocity.
-    velocity = fma(force, dt, velocity);
+        if (age > 0.0f) {
+        // Calculate external forces.
+        vec3 force = CalculateForces(p);
 
-    if (uEnableVelocityControl == 1u) {
-      velocity = uVelocityFactor * normalize(velocity);
+        // Integrations vectors.
+        const vec3 dt = vec3(uTimeStep) * uTimeStepFactor;
+        vec3 velocity = p.velocity.xyz;
+        vec3 position = p.position.xyz;
+
+        // Integrate velocity.
+        velocity = fma(force, dt, velocity);
+
+        if (uEnableVelocityControl == 1u) {
+            velocity = uVelocityFactor * normalize(velocity);
+        }
+
+        // Integrate position.
+        position = fma(velocity, dt, position);
+
+        // Update the particle.
+        UpdateParticle(p, position, velocity, age);
+
+        // Save it in buffer.
+        PushParticle(p);
+        }
     }
-
-    // Integrate position.
-    position = fma(velocity, dt, position);
-
-    // Update the particle.
-    UpdateParticle(p, position, velocity, age);
-
-    // Save it in buffer.
-    PushParticle(p);
-  }
 }

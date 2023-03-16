@@ -97,8 +97,9 @@ void AppendConsumeBuffer::swapAtomics() {
 //**************************************************************************************************
 //FUNCTION:
 void AppendConsumeBuffer::swapStorage() {
+     
 #if 1
-    // Costly but safe.
+    // Costly but safe.   由于VBO用的是fist，所以不能用swapuint
     glCopyNamedBufferSubData(
         m_StorageBuffers[1u], m_StorageBuffers[0u],
         0u, 0u, m_StorageBufferSize);
@@ -108,6 +109,7 @@ void AppendConsumeBuffer::swapStorage() {
     SwapUint(m_StorageBuffers[0u], m_StorageBuffers[1u]);
 #endif
 }
+ 
 //**************************************************************************************************
 //FUNCTION:
 unsigned int AppendConsumeBuffer::getNumAliveParticlesFromDevice() const {
@@ -119,6 +121,6 @@ unsigned int AppendConsumeBuffer::getNumAliveParticlesFromDevice() const {
     num_alived_particles = *ptr;
     glUnmapBuffer(GL_ATOMIC_COUNTER_BUFFER);
     glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, 0u);
- 
+
     return num_alived_particles;
 }

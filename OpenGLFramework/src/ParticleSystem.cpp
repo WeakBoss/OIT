@@ -247,13 +247,12 @@ void CParticleSystem::genVBO() {
 //FUNCTION:
 void CParticleSystem::emission(const float vDeltaTime) {
     
-    const unsigned int EmitNum = getBatchEmitNum(vDeltaTime);
+    const  unsigned int EmitNum = getBatchEmitNum(vDeltaTime);
     if (!EmitNum) {
         return;
     }
 
     m_pComputeShaders.Emission->activeShader();
-    
     m_pComputeShaders.Emission->setuIntUniformValue("uEmitCount", EmitNum);
     m_pComputeShaders.Emission->setuIntUniformValue("uNumParticleType", m_NumParticleTypes);
     m_pComputeShaders.Emission->setuIntUniformValue("uRandomuint", m_pRandBuffer->getRandomInt(0,100));
@@ -267,6 +266,8 @@ void CParticleSystem::emission(const float vDeltaTime) {
 
     /* Number of particles expected to be simulated. */
     m_NumAliveParticles += EmitNum;
+
+ 
 
 }
 
@@ -297,6 +298,7 @@ void CParticleSystem::simulation(float const vTimeStep) {
     }
     m_pComputeShaders.Simulation->activeShader();
     {
+        m_pComputeShaders.Simulation->setuIntUniformValue("uNumAliveParticles", m_NumAliveParticles);
         m_pComputeShaders.Simulation->setFloatUniformValue("uTimeStep", vTimeStep);
         m_pComputeShaders.Simulation->setIntUniformValue("uVectorFieldSampler", 0);
    

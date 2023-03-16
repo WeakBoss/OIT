@@ -28,10 +28,10 @@ namespace hiveGraphics
         glm::vec4 emitter_position = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
         glm::vec4 emitter_direction = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 
-        unsigned int EmitNumPerSecond = 200;
-        float time_step_factor = 10.0f;
+        unsigned int EmitNumPerSecond = 50;
+        float time_step_factor = 1.0f;
         float min_age = 0.0f;
-        float max_age = 50.0f;
+        float max_age = 100.0f;
 
         EmitterType emitter_type = EmitterType::EMITTER_SPHERE;
         float emitter_radius = 10.0f;
