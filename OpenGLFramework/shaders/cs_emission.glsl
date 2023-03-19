@@ -3,9 +3,6 @@
  #include "Common.glsl"
 #include "inc_math.glsl"
 
- 
- 
-
 uint EmitterType;
 vec3 EmitterPosition;
 vec3 EmitterDirection;
@@ -55,16 +52,10 @@ uint getParticleType(uint vId)
    }
    return particle_type;
 }
-// ----------------------------------------------------------------------------
-
-void PushParticle(in vec3 position,
-                  in vec3 velocity,
-                  in float age,const uint type)
-{
-  // Emit particle id.
-  const uint id = atomicCounterIncrement(write_count);
-
  
+void PushParticle(in vec3 position,in vec3 velocity, in float age,const uint type)
+{
+  const uint id = atomicCounterIncrement(write_count);
   TParticle p;
   p.position = vec4(position, 1.0f);
   p.velocity = vec4(velocity, 0.0f);
@@ -73,10 +64,7 @@ void PushParticle(in vec3 position,
   p.type = type;
   p.id = id;
   particles[id] = p;
- 
 }
-
-// ----------------------------------------------------------------------------
 
 void CreateParticle(const uint gid, const uint type) {
   // Random vector.
@@ -86,7 +74,6 @@ void CreateParticle(const uint gid, const uint type) {
   // Position
   vec3 pos = EmitterPosition;
   if (EmitterType == 1) {
-    //pos += disk_distribution(uEmitterRadius, rn.xy);
     pos += disk_even_distribution(EmitterRadius, gid, uEmitCount);
   } else if (EmitterType == 2) {
     pos += sphere_distribution(EmitterRadius, rn.xy);
@@ -111,7 +98,7 @@ void main() {
   const uint gid = gl_GlobalInvocationID.x;
 
   if (gid < uEmitCount) {   
-
+  
     uint Type = getParticleType(gid);
     EmitterType = simulationParameters[Type].emitter_type;
     EmitterPosition = simulationParameters[Type].emitter_position.xyz;

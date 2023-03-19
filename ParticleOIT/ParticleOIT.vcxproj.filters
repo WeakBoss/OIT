@@ -71,19 +71,16 @@
     <ClInclude Include="inc\CustomGUI.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="inc\ParticleOITConfiguration.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="shaders\fs_stretched_sprite.glsl">
+    <None Include="shaders\particle_fs.glsl">
       <Filter>shaders\ParticleRender</Filter>
     </None>
-    <None Include="shaders\fs_point_sprite.glsl">
-      <Filter>shaders\ParticleRender</Filter>
-    </None>
-    <None Include="shaders\inc_rendering_shared.glsl">
-      <Filter>shaders\ParticleRender</Filter>
-    </None>
-    <None Include="shaders\vs_generic.glsl">
+    <None Include="shaders\particle_vs.glsl">
       <Filter>shaders\ParticleRender</Filter>
     </None>
     <None Include="shaders\fs_grid.glsl">
@@ -91,6 +88,9 @@
     </None>
     <None Include="shaders\vs_grid.glsl">
       <Filter>shaders\Grid</Filter>
+    </None>
+    <None Include="src\Parameters.json">
+      <Filter>资源文件</Filter>
     </None>
   </ItemGroup>
 </Project>

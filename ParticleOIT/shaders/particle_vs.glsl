@@ -1,10 +1,11 @@
 #version 450 core
 
-// ----------------------------------------------------------------------------
+#include "../inc/ParticleOITConfiguration.h"
 
 layout(location=0) in vec3 position;
-layout(location=1) in vec3 velocity;
+layout(location=1) in vec3 velocity;  //unused
 layout(location=2) in vec2 age_info;
+layout(location=3) in uint type;
 
 layout(std140,binding=0) uniform u_Matrices4ProjectionWorld
 {
@@ -12,19 +13,18 @@ layout(std140,binding=0) uniform u_Matrices4ProjectionWorld
     mat4 u_ViewMatrix;
 };
 
-uniform float uMinParticleSize = 1.0f; //
-uniform float uMaxParticleSize = 6.0f; //
-uniform float uColorMode = 0;
+
+
 uniform vec3 uBirthGradient = vec3(1.0f, 0.0f, 0.0f);
 uniform vec3 uDeathGradient = vec3(0.0f);
 
-out VDataBlock {
-  vec3 position;
-  vec3 velocity;
-  vec3 color;
-  float decay;
-  float pointSize;
-} OUT;
+ 
+layout(std430, binding = STORAGE_RENDER_PARAMETERS)
+readonly buffer RenderParameters {
+  SRenderParameters renderParameters[];
+};
+
+ 
 
 // ----------------------------------------------------------------------------
 
@@ -55,8 +55,8 @@ float curve_inout(in float x, in float edge) {
 // ----------------------------------------------------------------------------
 
 float compute_size(float z, float decay) {
-  const float min_size = uMinParticleSize;
-  const float max_size = uMaxParticleSize;
+  const float min_size = renderParameters[type].min_size;
+  const float max_size = renderParameters[type].max_size;
 
   // tricks to 'zoom-in' the pointsprite, just set to 1 to have normal size.
   const float depth = (max_size-min_size) / (z);
@@ -65,20 +65,8 @@ float compute_size(float z, float decay) {
 
   return size;
 }
-
-// ----------------------------------------------------------------------------
-
-vec3 base_color(in vec3 position, in float decay) {
-  // Gradient mode
-  if (uColorMode == 1) {
-    return mix(uBirthGradient, uDeathGradient, decay);
-  }
-  // Default mode
-  return 0.5f * (normalize(position) + 1.0f);
-}
-
-// ----------------------------------------------------------------------------
-
+ 
+ 
 void main() {
   const vec3 p = position.xyz;
 
@@ -90,12 +78,7 @@ void main() {
   gl_Position = u_ProjectionMatrix * u_ViewMatrix * vec4(p, 1.0f);
   gl_PointSize = compute_size(gl_Position.z, decay);
 
-  // Output parameters.
-  OUT.position = p;
-  OUT.velocity = velocity.xyz;
-  OUT.color = base_color(position, decay);
-  OUT.decay = decay;
-  OUT.pointSize = gl_PointSize;
+ 
 }
 
 // ----------------------------------------------------------------------------

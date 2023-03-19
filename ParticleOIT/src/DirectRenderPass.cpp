@@ -7,14 +7,17 @@ void CDirectRenderPass::initV()
 {
     m_pParticleSystemObj = std::dynamic_pointer_cast<CParticleSystemObj>(ResourceManager::getGameObjectByName("ParticleSystem"));
     m_pParticleSystemObj->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-    m_pRenderPointSpriteShader = std::make_shared<CShader>("shaders/vs_generic.glsl", "shaders/fs_point_sprite.glsl");
+    m_pRenderPointSpriteShader = std::make_shared<CShader>("shaders/particle_vs.glsl", "shaders/particle_fs.glsl");
     m_IndirectBuffer = m_pParticleSystemObj->getIndirectBuffer();
 
     m_pGridObj = std::dynamic_pointer_cast<CGridObj>(ResourceManager::getGameObjectByName("Grid"));
     m_pGridObj->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
     m_pRenderGridShader = std::make_shared<CShader>("shaders/vs_grid.glsl", "shaders/fs_grid.glsl");
    
+    genRenderParametersBuffer();
+    genSmokeTexture();
 
+    
 }
 //**************************************************************************************************
 //FUNCTION:
@@ -35,30 +38,10 @@ void CDirectRenderPass::updateV()
     glUseProgram(0u);
 
 
-    m_RenderingParameters = ResourceManager::getSharedDataByName<RenderingParameters_t>("DirectRenderSimulationParameters");
-    switch (m_RenderingParameters.rendermode) {
-    case RENDERMODE_STRETCHED:
-        break;
-
-    case RENDERMODE_POINTSPRITE:
-        m_pRenderPointSpriteShader->activeShader();
-        m_pRenderPointSpriteShader->setFloatUniformValue("uMinParticleSize", m_RenderingParameters.min_size);
-        m_pRenderPointSpriteShader->setFloatUniformValue("uMaxParticleSize", m_RenderingParameters.max_size);
-        m_pRenderPointSpriteShader->setFloatUniformValue("uColorMode", m_RenderingParameters.colormode);
-        m_pRenderPointSpriteShader->setFloatUniformValue("uBirthGradient", 
-            m_RenderingParameters.birth_gradient[0],
-            m_RenderingParameters.birth_gradient[1],
-            m_RenderingParameters.birth_gradient[2]);
-        m_pRenderPointSpriteShader->setFloatUniformValue("uDeathGradient",
-            m_RenderingParameters.death_gradient[0],
-            m_RenderingParameters.death_gradient[1],
-            m_RenderingParameters.death_gradient[2]);
-        m_pRenderPointSpriteShader->setFloatUniformValue("uFadeCoefficient", m_RenderingParameters.fading_factor);
-
-        break;
-    default:
-        break;
-    }
+    
+    m_pRenderPointSpriteShader->activeShader();
+    m_pRenderPointSpriteShader->setTextureUniformValue("uSmokeTexture", m_ParticleTexture);
+    bindRenderParameters();
 
     glDisable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
@@ -66,6 +49,7 @@ void CDirectRenderPass::updateV()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     m_pParticleSystemObj->use();
+ 
     void const* offset = reinterpret_cast<void const*>(offsetof(TIndirectValues, DrawCount));
     glBindBuffer(GL_DRAW_INDIRECT_BUFFER, m_IndirectBuffer);
     glDrawArraysIndirect(GL_POINTS, offset); 
@@ -73,4 +57,40 @@ void CDirectRenderPass::updateV()
     glBindVertexArray(0u);
 
     glUseProgram(0u);
+}
+//**************************************************************************************************
+//FUNCTION:
+void CDirectRenderPass::genSmokeTexture()
+{
+    m_ParticleTexture = std::make_shared<hiveGraphics::STexture>();
+    m_ParticleTexture->InternalFormat = GL_RGBA;
+    m_ParticleTexture->ExternalFormat = GL_RGBA;
+    m_ParticleTexture->TextureType = STexture::ETextureType::Texture2D;
+    m_ParticleTexture->TextureAttachmentType = STexture::ETextureAttachmentType::ColorTexture;
+
+    loadTextureFromFile("textures/smoke2.png", m_ParticleTexture);
+}
+
+//**************************************************************************************************
+//FUNCTION:
+void CDirectRenderPass::genRenderParametersBuffer()
+{
+    glGenBuffers(1u, &m_RenderParametersBuffer);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_RenderParametersBuffer);
+    glBufferStorage(GL_SHADER_STORAGE_BUFFER, sizeof(SRenderParameters) * m_pParticleSystemObj->getNumParticleType(), nullptr, GL_MAP_WRITE_BIT);
+    m_pMapRenderParameters = reinterpret_cast<SRenderParameters*>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(SRenderParameters) * m_pParticleSystemObj->getNumParticleType(), GL_MAP_WRITE_BIT));
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
+  
+    
+ }
+//**************************************************************************************************
+//FUNCTION:
+void CDirectRenderPass::bindRenderParameters()
+{
+    auto  RenderParametesSet = ResourceManager::getSharedDataByName<std::vector<SRenderParameters>>("DirectRenderSimulationParameters");
+    _WRONG(m_pMapRenderParameters == nullptr,"Empty Ptr of Buffer£¡");
+    std::memcpy(m_pMapRenderParameters, RenderParametesSet.data(), sizeof(SRenderParameters) * m_pParticleSystemObj->getNumParticleType());
+    
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, STORAGE_RENDER_PARAMETERS, m_RenderParametersBuffer);
 }

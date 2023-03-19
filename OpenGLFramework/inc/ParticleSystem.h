@@ -61,18 +61,17 @@ namespace hiveGraphics
         {
             m_SimulationParamsSet.push_back(vSimulationParams);
             m_NumParticleTypes++;
-            m_TotalEmitNumPerSecond += vSimulationParams.EmitNumPerSecond;
+            m_TotalEmitNumPerSecond += vSimulationParams.emit_num_per_second;
         }
         void addParticleType(const std::vector<SSimulationParameters>& vSimulationParamsSet)
         {
-            for (auto SP : vSimulationParamsSet)
+            for (const auto& SP : vSimulationParamsSet)
                 addParticleType(SP);
         }
         void setSimulationParameters(const SSimulationParameters& vSimulationParameters, int vIndex)
         {
             if (vIndex < m_SimulationParamsSet.size())
             {
-                m_IsSimulationParamsUpdated = true;
                 m_SimulationParamsSet[vIndex] = vSimulationParameters;
             }
             else
@@ -84,8 +83,13 @@ namespace hiveGraphics
                 setSimulationParameters(vSimulationParameters[i], i);
                  
         }
+        unsigned int getNumParticleType()
+        {
+            return m_NumParticleTypes;
+        }
     private:
         void genVBO();
+        void genBuffers();
         void emission(const float vDeltaTime);
         void simulation(float const vTimeStep);
         void swapBuffer();
@@ -108,21 +112,6 @@ namespace hiveGraphics
         unsigned int const m_MaxParticleCount = FloorParticleCount(MAX_NUM_PARTICLES);
         unsigned int const m_MaxEmitCountPerBatch = MAX_NUM_PARTICLES_PER_BATCH;
 
-
-        unsigned int m_NumParticleTypes = 0;
-        std::vector<SSimulationParameters> m_SimulationParamsSet;
-        bool m_IsSimulationParamsUpdated = true;
-        GLuint m_SimulationParamsBuffer;
-        GLuint m_ParticleProportionBuffer;
-
-        unsigned int m_NumAliveParticles = 0;;
-        unsigned int m_TotalEmitNumPerSecond = 0;
-        std::shared_ptr<AppendConsumeBuffer> m_pAppendConsumeBuffer = nullptr;                 
-        std::shared_ptr<CRandomBuffer> m_pRandBuffer = nullptr;
-        std::shared_ptr<CVectorField> m_pVectorField = nullptr;                     
-
-   
-
         struct
         {
             std::shared_ptr<CShader> Emission;
@@ -143,7 +132,20 @@ namespace hiveGraphics
 
         bool m_IsSimulated;                         
         bool m_EnableSorting;                         
-        bool m_EnableVectorfield;                       
+        bool m_EnableVectorfield;              
+
+        unsigned int m_NumParticleTypes = 0;
+        std::vector<SSimulationParameters> m_SimulationParamsSet;
+        SSimulationParameters* m_pMapSimulationParams;
+        float* m_pMapParticleProportion;
+        GLuint m_SimulationParamsBuffer;
+        GLuint m_ParticleProportionBuffer;
+
+        unsigned int m_NumAliveParticles = 0;;
+        unsigned int m_TotalEmitNumPerSecond = 0;
+        std::shared_ptr<AppendConsumeBuffer> m_pAppendConsumeBuffer = nullptr;
+        std::shared_ptr<CRandomBuffer> m_pRandBuffer = nullptr;
+        std::shared_ptr<CVectorField> m_pVectorField = nullptr;
     };
 }
 

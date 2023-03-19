@@ -15,7 +15,12 @@ public:
 private:
 	std::shared_ptr<CParticleSystemObj> m_pParticleSystemObj = nullptr;
 	std::shared_ptr<CGridObj> m_pGridObj = nullptr;
-	std::vector<SSimulationParameters> m_SimulationParametersSet;
 
-	RenderingParameters_t m_RenderingParameters;
+	std::vector<SSimulationParameters> m_SimulationParametersSet;
+	std::vector<SRenderParameters> m_RenderingParametersSet;
+
+	void readParametersFromFile();
+	const std::string m_ParametersPath = "src/Parameters.json";
+ 
+	 
 };

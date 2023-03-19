@@ -35,6 +35,10 @@ public:
     {
         return m_pGPUPartile->getNumAliveParticles();
     }
+    unsigned int getNumParticleType()
+    {
+        return m_pGPUPartile->getNumParticleType();
+    }
 private:
     GLuint m_VAO;
     std::shared_ptr<hiveGraphics::CParticleSystem> m_pGPUPartile;

@@ -6,17 +6,8 @@ using namespace hiveGraphics;
 //**************************************************************************************************
 //FUNCTION:
 void CParticleSystem::init() {
-    /* Append/Consume Buffer */
-    unsigned int const num_attrib_buffer = (sizeof(TParticle) + sizeof(glm::vec4) - 1u) / sizeof(glm::vec4); //
-    m_pAppendConsumeBuffer = std::make_shared<AppendConsumeBuffer>(m_MaxParticleCount, num_attrib_buffer);
-    m_pAppendConsumeBuffer->init();
+    genBuffers();
 
-    /* Random value buffer */
-    unsigned int const num_randvalues = 3u * m_MaxParticleCount;
-
-    m_pRandBuffer = std::make_shared<CRandomBuffer>();
-    m_pRandBuffer->init(num_randvalues);
-    m_pRandBuffer->generateValues();
 
     /* VectorField generator */
     if (m_EnableVectorfield) {
@@ -44,58 +35,7 @@ void CParticleSystem::init() {
     /* One time uniform setting */
     m_pComputeShaders.Simulation->setIntUniformValue("uPerlinNoisePermutationSeed", rand());
 
-    /* Dispatch and Draw Indirect buffer */
-    glGenBuffers(1u, &m_IndirectBuffer);
-    glBindBuffer(GL_DISPATCH_INDIRECT_BUFFER, m_IndirectBuffer);
-    TIndirectValues const default_indirect[] = { {
-            // Dispatch values
-            1u, 1u, 1u, 
-            // DrawCount
-            0u,
-            // Draw values
-            1u, 0u, 0u,
-            //padding
-            0u
-          } };
-    glBufferStorage(GL_DISPATCH_INDIRECT_BUFFER, sizeof default_indirect, default_indirect, 0);
-    glBindBuffer(GL_DISPATCH_INDIRECT_BUFFER, 0u);
-
-    /* Storage buffers */
-
-    // The parallel nature of the sorting algorithm needs power of two sized buffer.
-    unsigned int const sort_buffer_max_count = GetClosestPowerOfTwo(m_MaxParticleCount); //
-
-    // DotProducts buffer.
-    glGenBuffers(1u, &m_DotProductBuffer);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_DotProductBuffer);
-    GLuint const dp_buffer_size = sort_buffer_max_count * sizeof(GLfloat);
-    glBufferStorage(GL_SHADER_STORAGE_BUFFER, dp_buffer_size, nullptr, 0);
-
-    // Double-sized buffer for indices sorting.
-    /// @note might use short instead.
-    glGenBuffers(1u, &m_SortIndicesBuffer);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_SortIndicesBuffer);
-    GLuint const sort_indices_buffer_size = 2u * sort_buffer_max_count * sizeof(GLuint);
-    glBufferStorage(GL_SHADER_STORAGE_BUFFER, sort_indices_buffer_size, nullptr, 0);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
-
-    //m_SimulationParamsBuffer
     
-    if (0 == m_NumParticleTypes)
-    {
-        _WARNING(true, "m_NumParticleTypes = 0");
-        addParticleType(SSimulationParameters());
-    }
-    glGenBuffers(1u, &m_SimulationParamsBuffer);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_SimulationParamsBuffer);
-    glBufferStorage(GL_SHADER_STORAGE_BUFFER, sizeof(SSimulationParameters) * m_NumParticleTypes, nullptr, GL_MAP_WRITE_BIT);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
-
-    //m_ParticleProportionBuffer
-    glGenBuffers(1u, &m_ParticleProportionBuffer);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ParticleProportionBuffer);
-    glBufferStorage(GL_SHADER_STORAGE_BUFFER, sizeof(float) * m_NumParticleTypes, nullptr, GL_MAP_WRITE_BIT);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
 
     /* Setup rendering buffers */
     genVBO();
@@ -115,10 +55,19 @@ void CParticleSystem::deinit() {
         m_pVectorField->deinit();
     }
 
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_SimulationParamsBuffer);
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ParticleProportionBuffer);
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
+
     glDeleteBuffers(1u, &m_IndirectBuffer);
     glDeleteBuffers(1u, &m_DotProductBuffer);
     glDeleteBuffers(1u, &m_SortIndicesBuffer);
     glDeleteBuffers(1u, &m_SimulationParamsBuffer);
+    glDeleteBuffers(1u, &m_ParticleProportionBuffer);
     glDeleteVertexArrays(1u, &m_VAO);
 }
 
@@ -237,10 +186,93 @@ void CParticleSystem::genVBO() {
         glVertexAttribBinding(attrib_index, binding_index);
         glEnableVertexAttribArray(attrib_index);
     }
+ 
+    {
+        unsigned int const attrib_index = 3u;
+        unsigned int const num_component = 1u;
+        glVertexAttribFormat(attrib_index, num_component, GL_FLOAT, GL_FALSE, offsetof(TParticle, type)); //
+        glVertexAttribBinding(attrib_index, binding_index);
+        glEnableVertexAttribArray(attrib_index);
+    }
 
 #endif
 
     glBindVertexArray(0u);
+}
+
+//**************************************************************************************************
+//FUNCTION:
+void hiveGraphics::CParticleSystem::genBuffers()
+{
+    /* Append/Consume Buffer */
+    unsigned int const num_attrib_buffer = (sizeof(TParticle) + sizeof(glm::vec4) - 1u) / sizeof(glm::vec4); //
+    m_pAppendConsumeBuffer = std::make_shared<AppendConsumeBuffer>(m_MaxParticleCount, num_attrib_buffer);
+    m_pAppendConsumeBuffer->init();
+
+    /* Random value buffer */
+    unsigned int const num_randvalues = 3u * m_MaxParticleCount;
+
+    m_pRandBuffer = std::make_shared<CRandomBuffer>();
+    m_pRandBuffer->init(num_randvalues);
+    m_pRandBuffer->generateValues();
+
+    /* Dispatch and Draw Indirect buffer */
+    glGenBuffers(1u, &m_IndirectBuffer);
+    glBindBuffer(GL_DISPATCH_INDIRECT_BUFFER, m_IndirectBuffer);
+    TIndirectValues const default_indirect[] = { {
+            // Dispatch values
+            1u, 1u, 1u,
+            // DrawCount
+            0u,
+            // Draw values
+            1u, 0u, 0u,
+            //padding
+            0u
+          } };
+    glBufferStorage(GL_DISPATCH_INDIRECT_BUFFER, sizeof default_indirect, default_indirect, 0);
+    glBindBuffer(GL_DISPATCH_INDIRECT_BUFFER, 0u);
+
+    /* Storage buffers */
+
+    // The parallel nature of the sorting algorithm needs power of two sized buffer.
+    unsigned int const sort_buffer_max_count = GetClosestPowerOfTwo(m_MaxParticleCount); //
+
+    // DotProducts buffer.
+    glGenBuffers(1u, &m_DotProductBuffer);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_DotProductBuffer);
+    GLuint const dp_buffer_size = sort_buffer_max_count * sizeof(GLfloat);
+    glBufferStorage(GL_SHADER_STORAGE_BUFFER, dp_buffer_size, nullptr, 0);
+
+    // Double-sized buffer for indices sorting.
+    /// @note might use short instead.
+    glGenBuffers(1u, &m_SortIndicesBuffer);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_SortIndicesBuffer);
+    GLuint const sort_indices_buffer_size = 2u * sort_buffer_max_count * sizeof(GLuint);
+    glBufferStorage(GL_SHADER_STORAGE_BUFFER, sort_indices_buffer_size, nullptr, 0);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
+
+    //m_SimulationParamsBuffer
+
+    if (0 == m_NumParticleTypes)
+    {
+        _WARNING(true, "m_NumParticleTypes = 0");
+        addParticleType(SSimulationParameters());
+    }
+    glGenBuffers(1u, &m_SimulationParamsBuffer);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_SimulationParamsBuffer);
+    glBufferStorage(GL_SHADER_STORAGE_BUFFER, sizeof(SSimulationParameters) * m_NumParticleTypes, nullptr, GL_MAP_WRITE_BIT);
+    m_pMapSimulationParams = reinterpret_cast<SSimulationParameters*>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(SSimulationParameters) * m_NumParticleTypes, GL_MAP_WRITE_BIT));
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
+
+    //m_ParticleProportionBuffer
+    glGenBuffers(1u, &m_ParticleProportionBuffer);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ParticleProportionBuffer);
+    glBufferStorage(GL_SHADER_STORAGE_BUFFER, sizeof(float) * m_NumParticleTypes, nullptr, GL_MAP_WRITE_BIT);
+    m_pMapParticleProportion = reinterpret_cast<float*>(
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(float) * m_NumParticleTypes, GL_MAP_WRITE_BIT));
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
+
 }
 
 //**************************************************************************************************
@@ -418,10 +450,10 @@ void CParticleSystem::sortParticles(glm::mat4x4 const& vViewMat) {
 //FUNCTION:
 void CParticleSystem::swapBuffer() {
     if (m_IsSimulated) {
-        /* Swap atomic counter to have number of alives particles in the first slot */
+        /* Swap atomic counter to have number of alive particles in the first slot */
         m_pAppendConsumeBuffer->swapAtomics();
 
-        /* Copy non sorted alives particles back to the first buffer. */
+        /* Copy non sorted alive particles back to the first buffer. */
         if (!m_EnableSorting) {
             m_pAppendConsumeBuffer->swapStorage();
         }
@@ -438,35 +470,23 @@ void CParticleSystem::swapBuffer() {
 //FUNCTION:
 void CParticleSystem::bindSimulationParameters()
 {
-    if (m_IsSimulationParamsUpdated)
-    {
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_SimulationParamsBuffer);
-        SSimulationParameters* pSP = reinterpret_cast<SSimulationParameters*>(
-            glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(SSimulationParameters) * m_NumParticleTypes, GL_MAP_WRITE_BIT));
-        std::memcpy(pSP, m_SimulationParamsSet.data(), sizeof(SSimulationParameters) * m_NumParticleTypes);
-        glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
-        //
-        unsigned int TotalEmitNumPerSecond = 0u;
-        std::for_each(m_SimulationParamsSet.begin(), m_SimulationParamsSet.end(),
-            [&TotalEmitNumPerSecond](auto SP) {TotalEmitNumPerSecond += SP.EmitNumPerSecond; });
+ 
+    _WRONG(m_pMapSimulationParams == nullptr || m_pMapParticleProportion == nullptr, "Empty Ptr of Buffer£¡");
 
-        std::vector<float> ParticleProportion;
-        for (SSimulationParameters& SP : m_SimulationParamsSet)
-            ParticleProportion.push_back(1.0f * SP.EmitNumPerSecond / TotalEmitNumPerSecond);
-        for (int i = 1; i < m_NumParticleTypes; i++)
-            ParticleProportion[i] += ParticleProportion[i - 1];
+    std::memcpy(m_pMapSimulationParams, m_SimulationParamsSet.data(), sizeof(SSimulationParameters) * m_NumParticleTypes);
+   
+    unsigned int TotalEmitNumPerSecond = 0u;
+    std::for_each(m_SimulationParamsSet.begin(), m_SimulationParamsSet.end(),
+        [&TotalEmitNumPerSecond](auto SP) {TotalEmitNumPerSecond += SP.emit_num_per_second; });
 
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ParticleProportionBuffer);
-        float* pProportion = reinterpret_cast<float*>(
-            glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(float) * m_NumParticleTypes, GL_MAP_WRITE_BIT));
-        std::memcpy(pProportion, ParticleProportion.data(), sizeof(float) * m_NumParticleTypes);
-        glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
+    std::vector<float> ParticleProportion;
+    for (SSimulationParameters& SP : m_SimulationParamsSet)
+        ParticleProportion.push_back(1.0f * SP.emit_num_per_second / TotalEmitNumPerSecond);
+    for (int i = 1; i < m_NumParticleTypes; i++)
+        ParticleProportion[i] += ParticleProportion[i - 1];
 
-        m_IsSimulationParamsUpdated = false;
-    }
-
+    std::memcpy(m_pMapParticleProportion, ParticleProportion.data(), sizeof(float) * m_NumParticleTypes);
+ 
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, STORAGE_PARTICLE_PROPORTION, m_ParticleProportionBuffer);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, STORAGE_SIMULATE_PARAMETER, m_SimulationParamsBuffer);
    
