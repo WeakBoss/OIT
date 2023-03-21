@@ -209,14 +209,15 @@ void main() {
         uScatteringFactor = simulationParameters[Type].scattering_factor;
         uVectorFieldFactor = simulationParameters[Type].vectorfield_factor;;
         uCurlNoiseFactor = simulationParameters[Type].curlnoise_factor;
-        uCurlNoiseScale = simulationParameters[Type].curlnoise_scale;
+        uCurlNoiseScale = 1.0f / simulationParameters[Type].curlnoise_scale;
         uVelocityFactor = simulationParameters[Type].vectorfield_factor;
-        uTimeStepFactor = simulationParameters[Type].time_step_factor;
 
         uEnableScattering = simulationParameters[Type].enable_scattering;
         uEnableVectorField = simulationParameters[Type].enable_vectorfield;
         uEnableCurlNoise = simulationParameters[Type].enable_curlnoise;
         uEnableVelocityControl = simulationParameters[Type].enable_velocity_control;
+
+        uTimeStepFactor = simulationParameters[Type].time_step_factor;
 
         float age = GetUpdatedAge(p);
 

@@ -260,17 +260,17 @@ void hiveGraphics::CParticleSystem::genBuffers()
     }
     glGenBuffers(1u, &m_SimulationParamsBuffer);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_SimulationParamsBuffer);
-    glBufferStorage(GL_SHADER_STORAGE_BUFFER, sizeof(SSimulationParameters) * m_NumParticleTypes, nullptr, GL_MAP_WRITE_BIT);
+    glBufferStorage(GL_SHADER_STORAGE_BUFFER, sizeof(SSimulationParameters) * m_NumParticleTypes, nullptr, GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
     m_pMapSimulationParams = reinterpret_cast<SSimulationParameters*>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(SSimulationParameters) * m_NumParticleTypes, GL_MAP_WRITE_BIT));
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(SSimulationParameters) * m_NumParticleTypes, GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT));
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
 
     //m_ParticleProportionBuffer
     glGenBuffers(1u, &m_ParticleProportionBuffer);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_ParticleProportionBuffer);
-    glBufferStorage(GL_SHADER_STORAGE_BUFFER, sizeof(float) * m_NumParticleTypes, nullptr, GL_MAP_WRITE_BIT);
+    glBufferStorage(GL_SHADER_STORAGE_BUFFER, sizeof(float) * m_NumParticleTypes, nullptr, GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
     m_pMapParticleProportion = reinterpret_cast<float*>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(float) * m_NumParticleTypes, GL_MAP_WRITE_BIT));
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(float) * m_NumParticleTypes, GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT));
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
 
 }
@@ -326,13 +326,14 @@ void CParticleSystem::simulation(float const vTimeStep) {
 
     /* Simulation Kernel */
     if (m_EnableVectorfield) {
+        glActiveTexture(GL_TEXTURE0 + VECTOR_FIELD_TEXTURE_BIND);
         glBindTexture(GL_TEXTURE_3D, m_pVectorField->texture_id());
     }
     m_pComputeShaders.Simulation->activeShader();
     {
         m_pComputeShaders.Simulation->setuIntUniformValue("uNumAliveParticles", m_NumAliveParticles);
         m_pComputeShaders.Simulation->setFloatUniformValue("uTimeStep", vTimeStep);
-        m_pComputeShaders.Simulation->setIntUniformValue("uVectorFieldSampler", 0);
+        m_pComputeShaders.Simulation->setIntUniformValue("uVectorFieldSampler", VECTOR_FIELD_TEXTURE_BIND);
    
  
 

@@ -6,7 +6,7 @@ struct SRenderParameters
 {
     float min_size;
     float max_size;
-    float fading_factor;
-    float padding;
+    float padding0;
+    float padding1;
 };
 #endif

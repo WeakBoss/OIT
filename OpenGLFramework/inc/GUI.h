@@ -47,6 +47,7 @@ public:
 	bool sliderScalarN(const std::string& vLable, hiveGraphics::EDataType vDataType, int vComponentsNum, void* vValue, const void* vMin, const void* vMax);
 	bool sliderFloat(const std::string& vLable, float& vioValue, float vMin, float vMax);
 	bool sliderFloat4(const std::string& vLable, glm::vec4& vioValue, float vMin, float vMax);
+	bool sliderInt(const std::string& vLable, int& vioValue, int vMin, int vMax);
 	bool verticalSilderScalar(const std::string& vLable, const glm::vec2& vSliderSize, hiveGraphics::EDataType vDataType, void* vValue, const void* vMin, const void* vMax);	//return true when value changed
 	void horizontalLine();
 	void sameLine();
@@ -96,7 +97,9 @@ public:
 	void closeCurrentPopup();
 	void pushStyleColor(hiveGraphics::EGUIItemColor vItemColor, const glm::vec4& vColor);
 	void popStyleColor(int vPopCount = 1);
-
+	void pushID(int vId);
+	void popID();
+	void separator();
 private:
 	int					 m_ExecutionOrder = -1;
 	std::string			 m_Name;

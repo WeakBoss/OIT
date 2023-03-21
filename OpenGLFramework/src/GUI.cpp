@@ -185,6 +185,11 @@ bool IGUI::sliderFloat4(const std::string& vLable, glm::vec4& vioValue, float vM
 	vioValue = glm::vec4(TmpData[0], TmpData[1], TmpData[2], TmpData[3]);
 }
 
+bool IGUI::sliderInt(const std::string& vLable, int& vioValue, int vMin, int vMax)
+{
+	return ImGui::SliderInt(vLable.c_str(), &vioValue, vMin, vMax);
+}
+
 //************************************************************************************
 //Function:
 bool IGUI::verticalSilderScalar(const std::string& vLable, const glm::vec2& vSliderSize, hiveGraphics::EDataType vDataType, void* vValue, const void* vMin, const void* vMax)
@@ -542,4 +547,22 @@ void IGUI::pushStyleColor(hiveGraphics::EGUIItemColor vItemColor, const glm::vec
 void IGUI::popStyleColor(int vPopCount/* = 1*/)
 {
 	ImGui::PopStyleColor(vPopCount);
+}
+//************************************************************************************
+//Function:
+void IGUI::pushID(int vId)
+{
+	ImGui::PushID(vId);
+}
+//************************************************************************************
+//Function:
+void IGUI::popID()
+{
+	ImGui::PopID();
+}
+//************************************************************************************
+//Function:
+void IGUI::separator()
+{
+	ImGui::Separator();
 }

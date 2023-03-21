@@ -73,12 +73,14 @@ namespace hiveGraphics
             if (vIndex < m_SimulationParamsSet.size())
             {
                 m_SimulationParamsSet[vIndex] = vSimulationParameters;
+                m_TotalEmitNumPerSecond += vSimulationParameters.emit_num_per_second;
             }
             else
                 _WARNING(true, "vIndex out of range");
         }
         void setSimulationParameters(const std::vector<SSimulationParameters>& vSimulationParameters)
         {
+            m_TotalEmitNumPerSecond = 0;
             for (int i = 0; i < vSimulationParameters.size(); i++)
                 setSimulationParameters(vSimulationParameters[i], i);
                  

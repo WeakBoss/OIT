@@ -22,7 +22,7 @@
 #define ATOMIC_COUNTER_BINDING_FIRST                     0
 #define ATOMIC_COUNTER_BINDING_SECOND                    1
 
-
+#define VECTOR_FIELD_TEXTURE_BIND                        0
 
 #ifndef SPARKLE_USE_SOA_LAYOUT
 #define SPARKLE_USE_SOA_LAYOUT              FALSE

@@ -4,7 +4,7 @@
             "emitter_position": [ 0.0, 0.0, 0.0, 0.0 ],
             "emitter_direction": [ 0.0, 1.0, 0.0, 0.0 ],
             "emit_num_per_second": 500,
-            "time_step_factor": 1.0,
+            "time_step_factor": 10.0,
             "min_age": 0.0,
             "max_age": 100.0,
             "emitter_type": "EMITTER_SPHERE",
@@ -18,7 +18,7 @@
             "enable_scattering": 1,
             "enable_vectorfield": 0,
             "enable_curlnoise": 0,
-            "enable_velocity_control": 1
+            "enable_velocity_control": 0
         },
         {
             "emitter_position": [ 50.0, 0.0, 0.0, 0.0 ],
@@ -38,20 +38,20 @@
             "enable_scattering": 1,
             "enable_vectorfield": 0,
             "enable_curlnoise": 0,
-            "enable_velocity_control": 1
+            "enable_velocity_control": 0
         }
     ],
     "render_parameters": [
         {
 
             "min_size": 0.75,
-            "max_size": 25.0,
-            "fading_factor": 0.35
+            "max_size": 25.0
+ 
         },
         {
             "min_size": 0.75,
-            "max_size": 25.0,
-            "fading_factor": 0.35
+            "max_size": 25.0
+ 
         }
     ]
 }

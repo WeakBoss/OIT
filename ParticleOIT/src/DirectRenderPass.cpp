@@ -17,7 +17,7 @@ void CDirectRenderPass::initV()
     genRenderParametersBuffer();
     genSmokeTexture();
 
-    
+    createVAO4ScreenQuad();
 }
 //**************************************************************************************************
 //FUNCTION:
@@ -77,9 +77,9 @@ void CDirectRenderPass::genRenderParametersBuffer()
 {
     glGenBuffers(1u, &m_RenderParametersBuffer);
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_RenderParametersBuffer);
-    glBufferStorage(GL_SHADER_STORAGE_BUFFER, sizeof(SRenderParameters) * m_pParticleSystemObj->getNumParticleType(), nullptr, GL_MAP_WRITE_BIT);
+    glBufferStorage(GL_SHADER_STORAGE_BUFFER, sizeof(SRenderParameters) * m_pParticleSystemObj->getNumParticleType(), nullptr, GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
     m_pMapRenderParameters = reinterpret_cast<SRenderParameters*>(
-        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(SRenderParameters) * m_pParticleSystemObj->getNumParticleType(), GL_MAP_WRITE_BIT));
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, sizeof(SRenderParameters) * m_pParticleSystemObj->getNumParticleType(), GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT));
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0u);
   
     

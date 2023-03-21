@@ -84,7 +84,7 @@ void CreateParticle(const uint gid, const uint type) {
   // Velocity
   vec3 vel = EmitterDirection;
 
-  const float single_rand = randbuffer[gid];
+  const float single_rand = randbuffer[gid];  
 
   const float age = mix( ParticleMinAge, ParticleMaxAge, single_rand);
 
