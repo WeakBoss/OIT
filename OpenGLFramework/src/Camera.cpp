@@ -121,6 +121,12 @@ const glm::dvec3& CCamera::getCameraUp() const
 {
 	return m_UpVector;
 }
+//************************************************************************************
+//Function:
+const glm::dvec3& CCamera::getCameraFront() const
+{
+	return m_CameraFront;
+}
 
 //************************************************************************************
 //Function:
@@ -156,9 +162,22 @@ void CCamera::update()
 	if (pInputManager->getKeyStatus()[GLFW_KEY_Q])
 		m_CameraPos += MoveDistance * glm::dvec3(0.0, 1.0, 0.0);
 	if (pInputManager->getKeyStatus()[GLFW_KEY_E])
-		m_CameraPos -= MoveDistance * glm::dvec3(0.0, 1.0, 0.0);
+        m_CameraPos -= MoveDistance * glm::dvec3(0.0, 1.0, 0.0); 
+	if (pInputManager->getKeyStatus()[GLFW_KEY_Z])
+	{
+		roll(glm::radians(MoveDistance));
+	}
+    if (pInputManager->getKeyStatus()[GLFW_KEY_C])
+    {
+        roll(-glm::radians(MoveDistance));
+    }
 }
-
+void CCamera::roll(float vRadians)
+{
+	glm::mat4 RotateMatrix(1.0f);
+	RotateMatrix = glm::rotate(RotateMatrix, vRadians,glm::vec3(m_CameraFront));
+	m_UpVector = glm::mat3(RotateMatrix) * m_UpVector;
+}
 //************************************************************************************
 //Function:
 glm::mat4 CCamera::getPrevViewMatrix() const

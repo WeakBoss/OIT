@@ -20,7 +20,9 @@ void CUBO4ProjectionWorld::init()
 void CUBO4ProjectionWorld::update()
 {
 	glm::mat4 ViewMatrix = CResourceManager::getOrCreateInstance()->fecthOrCreateMainCamera()->getViewMatrix();
+	glm::mat4 ProMatrix = CResourceManager::getOrCreateInstance()->fecthOrCreateMainCamera()->getProjectionMatrix();
 	updateViewMatrix(ViewMatrix);
+	updateProjectionMatrix(ProMatrix);
 }
 
 //************************************************************************************

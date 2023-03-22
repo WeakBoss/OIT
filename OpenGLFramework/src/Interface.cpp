@@ -125,6 +125,12 @@ glm::dvec3 hiveGraphics::Camera::getMainCameraLookAtPos()
 {
 	return CResourceManager::getOrCreateInstance()->fecthOrCreateMainCamera()->getLookAtPos();
 }
+//************************************************************************************
+//Function:
+const glm::dvec3& hiveGraphics::Camera::getMainCameraFront()
+{
+	return CResourceManager::getOrCreateInstance()->fecthOrCreateMainCamera()->getCameraFront();
+}
 
 //************************************************************************************
 //Function:

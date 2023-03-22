@@ -14,6 +14,7 @@ public:
 	GLvoid init();
 	GLvoid update();
 
+	
 	GLdouble   getCameraFov() const;
 	GLdouble   getCameraNear() const;
 	GLdouble   getCameraFar() const;
@@ -23,14 +24,14 @@ public:
 	glm::dvec3 getLookAtPos() const;
 	const glm::dvec3& getCameraPos() const;
 	const glm::dvec3& getCameraUp() const;
-
+	const glm::dvec3& getCameraFront() const;
 	void setCameraPos(glm::dvec3 vCameraPos) { m_CameraPos = vCameraPos; }
 	void setCameraFront(glm::dvec3 vCameraFront) { m_CameraFront = vCameraFront; }
 	void setFarPlane(GLdouble vFarPlane) { m_Far = vFarPlane; }
 	void setMoveSpeed(GLdouble vMoveSpeed) { m_MoveSpeed = vMoveSpeed; }
 	void setFov(GLdouble vFov) { m_Fov = vFov; }
 	void setEnableCursor(bool vIsEnableCursor) { m_IsEnableCursor = vIsEnableCursor; }
-
+	void roll(float vRadians);
 private:
 	GLvoid __processMovement4KeyCallback(GLint vKey, GLint vScancode, GLint vAction, GLint vMode);
 	GLvoid __processRotate4CursorCallback(GLdouble vPosX, GLdouble vPosY);
@@ -48,6 +49,7 @@ private:
 	GLdouble m_Pitch = 0.0;
 	GLdouble m_Yaw = 0.0;
 	GLdouble m_Fov = 45.0;
+	GLdouble m_Roll = 0.0;
 	GLdouble m_MoveSpeed = 5.0;
 	GLdouble m_Sensitivity =0.03;
 	GLdouble m_Near = 0.1;

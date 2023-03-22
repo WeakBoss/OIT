@@ -46,6 +46,7 @@ namespace hiveGraphics
 		FRAME_DLLEXPORTS double		getMainCameraNear();
 		FRAME_DLLEXPORTS double		getMainCameraFar();
 		FRAME_DLLEXPORTS glm::dvec3 getMainCameraLookAtPos();
+		FRAME_DLLEXPORTS const glm::dvec3& getMainCameraFront();
 		FRAME_DLLEXPORTS const glm::dvec3& getMainCameraPos();
 		FRAME_DLLEXPORTS const glm::dvec3& getMainCameraUp();
 		FRAME_DLLEXPORTS glm::mat4  getMainCameraProjectionMatrix();
