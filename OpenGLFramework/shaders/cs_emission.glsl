@@ -73,16 +73,18 @@ void CreateParticle(const uint gid, const uint type) {
 
   // Position
   vec3 pos = EmitterPosition;
-  if (EmitterType == 1) {
-    pos += disk_even_distribution(EmitterRadius, gid, uEmitCount);
-  } else if (EmitterType == 2) {
-    pos += sphere_distribution(EmitterRadius, rn.xy);
-  } else if (EmitterType == 3) {
-    pos += ball_distribution(EmitterRadius, rn);
-  }
+  vec3 randomPos = vec3(0.0f);
 
+  if (EmitterType == 1) {
+    randomPos += disk_even_distribution(EmitterRadius, gid , uEmitCount, randbuffer[rid + uRandomuint]);
+  } else if (EmitterType == 2) {
+    randomPos += sphere_distribution(EmitterRadius, rn.xy);
+  } else if (EmitterType == 3) {
+    randomPos += ball_distribution(EmitterRadius, rn);
+  }
+  pos += randomPos;
   // Velocity
-  vec3 vel = EmitterDirection;
+  vec3 vel = normalize( randomPos + EmitterDirection * 5 );
 
   const float single_rand = randbuffer[gid];  
 

@@ -39,38 +39,39 @@ void CCustomGUI::updateV()
             {
                 uint32_t MinEmitNum = 100u; uint32_t MaxEmitNum = 5000u;
                 IGUI::sliderScalar("emit num per second", EDataType::DataType_U32, &m_SimulationParametersSet[i].emit_num_per_second, &MinEmitNum, &MaxEmitNum, "%u");
-                IGUI::sliderFloat("time step factor", m_SimulationParametersSet[i].time_step_factor, 0.01, 100);
+                IGUI::sliderFloat("time step factor", m_SimulationParametersSet[i].time_step_factor, 0.01f, 20.0f);
+                IGUI::sliderFloat("min_age", m_SimulationParametersSet[i].min_age, 0.0f, 100.0f);
                 IGUI::sliderFloat("max_age", m_SimulationParametersSet[i].max_age, 100.0f, 1000.0f);
-                IGUI::sliderFloat("emitter_radius", m_SimulationParametersSet[i].emitter_radius, 0.0f, 100.0f);
+                IGUI::sliderFloat("emitter_radius", m_SimulationParametersSet[i].emitter_radius, 0.01f, 10.0f);
                 
                 {
-                    bool enable_vectorfield = m_SimulationParametersSet[i].enable_vectorfield;
+                    /*bool enable_vectorfield = m_SimulationParametersSet[i].enable_vectorfield;
                     IGUI::checkBox("enable_vectorfield", enable_vectorfield);
                     m_SimulationParametersSet[i].enable_vectorfield = enable_vectorfield;
                     IGUI::sameLine();
-                    IGUI::sliderFloat("factor", m_SimulationParametersSet[i].vectorfield_factor, 0.1f, 10.0f);
+                    IGUI::sliderFloat("factor##enable_vectorfield", m_SimulationParametersSet[i].vectorfield_factor, 0.01f, 1.0f);*/
                 }
                 {
                     bool enable_scattering = m_SimulationParametersSet[i].enable_scattering;
                     IGUI::checkBox("scattering", enable_scattering);
                     m_SimulationParametersSet[i].enable_scattering = enable_scattering;
                     IGUI::sameLine();
-                    IGUI::sliderFloat("factor", m_SimulationParametersSet[i].scattering_factor, 0.1f, 10.0f);
+                    IGUI::sliderFloat("factor##scattering", m_SimulationParametersSet[i].scattering_factor, 0.01f, 1.0f);
                 }
                 {
-                    bool enable_velocity_control = m_SimulationParametersSet[i].enable_velocity_control;
-                    IGUI::checkBox("enable_velocity_control", enable_velocity_control);
-                    m_SimulationParametersSet[i].enable_velocity_control = enable_velocity_control;
-                    IGUI::sameLine();
-                    IGUI::sliderFloat("factor", m_SimulationParametersSet[i].velocity_factor, 0.1f, 10.0f);
+                    /* bool enable_velocity_control = m_SimulationParametersSet[i].enable_velocity_control;
+                     IGUI::checkBox("enable_velocity_control", enable_velocity_control);
+                     m_SimulationParametersSet[i].enable_velocity_control = enable_velocity_control;
+                     IGUI::sameLine();
+                     IGUI::sliderFloat("factor##enable_velocity_control", m_SimulationParametersSet[i].velocity_factor, 0.1f, 10.0f);*/
                 }
                 {
-                    bool enable_curlnoise = m_SimulationParametersSet[i].enable_curlnoise;
-                    IGUI::checkBox("enable_curlnoise", enable_curlnoise);
-                    m_SimulationParametersSet[i].enable_curlnoise = enable_curlnoise;
-                    IGUI::sameLine();
-                    IGUI::sliderFloat("factor", m_SimulationParametersSet[i].curlnoise_factor, 0.1f, 20.0f);
-                    IGUI::sliderFloat("scale", m_SimulationParametersSet[i].curlnoise_scale, 1.0f, 200.0f);
+                    //bool enable_curlnoise = m_SimulationParametersSet[i].enable_curlnoise;
+                    //IGUI::checkBox("enable_curlnoise", enable_curlnoise);
+                    //m_SimulationParametersSet[i].enable_curlnoise = enable_curlnoise;
+                    //IGUI::sameLine();
+                    //IGUI::sliderFloat("factor##enable_curlnoise", m_SimulationParametersSet[i].curlnoise_factor, 0.01f, 1.0f);
+                    //IGUI::sliderFloat("scale", m_SimulationParametersSet[i].curlnoise_scale, 1.0f, 200.0f);
                 }
 
 
@@ -92,6 +93,9 @@ void CCustomGUI::updateV()
             if (IGUI::treeNode(fmt::format("Type{}:", i)))
             {
                 IGUI::sliderFloat("max_size", m_RenderingParametersSet[i].max_size, 1.0f, 100.0f);
+                IGUI::sliderFloat("size_scale_factor", m_RenderingParametersSet[i].size_scale_factor, 0.1f, 5.0f);
+                IGUI::colorEdit("color", m_RenderingParametersSet[i].particle_color, false);
+                IGUI::sliderFloat("alpha_factor", m_RenderingParametersSet[i].alpha_factor, 0.001f,0.3f);
                 IGUI::treePop();
             }
             IGUI::separator();
@@ -150,12 +154,14 @@ void CCustomGUI::readParametersFromFile()
         m_SimulationParametersSet.emplace_back(std::move(SimulationParameters));
     }
     boost::property_tree::ptree& RenderParametersArray = PTree.get_child("render_parameters");
-    for (const auto& RenderParametersNode : RenderParametersArray)
+    for (boost::property_tree::ptree::value_type& RenderParametersNode : RenderParametersArray)
     {
         SRenderParameters RenderParameters;
         RenderParameters.min_size = RenderParametersNode.second.get<float>("min_size");
         RenderParameters.max_size = RenderParametersNode.second.get<float>("max_size");
- 
+        RenderParameters.size_scale_factor = RenderParametersNode.second.get<float>("size_scale_factor");
+        RenderParameters.alpha_factor = RenderParametersNode.second.get<float>("alpha_factor");
+        RenderParameters.particle_color = getVec4FromKey(RenderParametersNode, "particle_color");
 
         m_RenderingParametersSet.emplace_back(std::move(RenderParameters));
     } 

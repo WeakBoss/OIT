@@ -71,7 +71,10 @@
     <ClInclude Include="inc\CustomGUI.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="inc\ParticleOITConfiguration.h">
+    <ClInclude Include="inc\Configuration.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\ParticleOITCommon.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
@@ -91,6 +94,9 @@
     </None>
     <None Include="src\Parameters.json">
       <Filter>资源文件</Filter>
+    </None>
+    <None Include="shaders\Common.glsl">
+      <Filter>shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

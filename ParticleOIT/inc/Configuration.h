@@ -1,0 +1,6 @@
+#ifndef PARTICLE_OIT_COMMON_H
+#define PARTICLE_OIT_COMMON_H
+
+#define STORAGE_RENDER_PARAMETERS      0
+
+#endif

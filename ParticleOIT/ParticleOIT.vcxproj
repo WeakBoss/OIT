@@ -165,15 +165,17 @@
     <ClCompile Include="src\ParticleSystemObj.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="inc\ParticleOITConfiguration.h" />
+    <ClInclude Include="inc\Configuration.h" />
     <ClInclude Include="inc\CustomGUI.h" />
     <ClInclude Include="inc\DirectRenderPass.h" />
     <ClInclude Include="inc\Grid.h" />
+    <ClInclude Include="inc\ParticleOITCommon.h" />
     <ClInclude Include="inc\ParticleOITPCH.h" />
     <ClInclude Include="inc\ParticleSystemObj.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="shaders\Common.glsl" />
     <None Include="shaders\fs_grid.glsl" />
     <None Include="shaders\particle_fs.glsl" />
     <None Include="shaders\particle_vs.glsl" />

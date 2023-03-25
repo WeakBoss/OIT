@@ -3,13 +3,13 @@
         {
             "emitter_position": [ 0.0, 0.0, 0.0, 0.0 ],
             "emitter_direction": [ 0.0, 1.0, 0.0, 0.0 ],
-            "emit_num_per_second": 500,
-            "time_step_factor": 10.0,
-            "min_age": 0.0,
+            "emit_num_per_second": 800,
+            "time_step_factor": 3.8,
+            "min_age": 50.0,
             "max_age": 100.0,
-            "emitter_type": "EMITTER_SPHERE",
-            "emitter_radius": 10.0,
-            "scattering_factor": 1.0,
+            "emitter_type": "EMITTER_DISK",
+            "emitter_radius": 2,
+            "scattering_factor": 0.36,
             "vectorfield_factor": 1.0,
             "curlnoise_factor": 16.0,
             "curlnoise_scale": 128.0,
@@ -21,15 +21,15 @@
             "enable_velocity_control": 0
         },
         {
-            "emitter_position": [ 50.0, 0.0, 0.0, 0.0 ],
+            "emitter_position": [ 20.0, 0.0, 0.0, 0.0 ],
             "emitter_direction": [ 0.0, 1.0, 0.0, 0.0 ],
             "emit_num_per_second": 500,
-            "time_step_factor": 1.0,
-            "min_age": 0.0,
+            "time_step_factor": 3.8,
+            "min_age": 50.0,
             "max_age": 100.0,
-            "emitter_type": "EMITTER_SPHERE",
-            "emitter_radius": 10.0,
-            "scattering_factor": 1.0,
+            "emitter_type": "EMITTER_DISK",
+            "emitter_radius": 1.65,
+            "scattering_factor": 0.3,
             "vectorfield_factor": 1.0,
             "curlnoise_factor": 16.0,
             "curlnoise_scale": 128.0,
@@ -45,13 +45,18 @@
         {
 
             "min_size": 0.75,
-            "max_size": 25.0
- 
+            "max_size": 44.0,
+            "size_scale_factor": 2.7,
+            "alpha_factor": 0.037,
+            "particle_color": [ 0.253, 0.247, 0.230, 1.000 ]
         },
         {
             "min_size": 0.75,
-            "max_size": 25.0
- 
+            "max_size": 45.0,
+            "size_scale_factor": 3.0,
+            "alpha_factor": 0.021,
+            "particle_color": [ 0.358, 0.358, 0.358, 1.000]
+
         }
     ]
 }

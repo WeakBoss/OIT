@@ -1,6 +1,6 @@
 #version 450 core
 
-#include "../inc/ParticleOITConfiguration.h"
+#include "Common.glsl"
 
 layout(location=0) in vec3 position;
 layout(location=1) in vec3 velocity;  //unused
@@ -66,8 +66,11 @@ float compute_size(float z, float decay) {
   return size;
 }
  
- 
+ flat out uint particleType;
 void main() {
+
+if(type==0u||type==1u)
+{
   const vec3 p = position.xyz;
 
   // Time alived in [0, 1].
@@ -76,9 +79,12 @@ void main() {
 
   // Vertex attributes.
   gl_Position = u_ProjectionMatrix * u_ViewMatrix * vec4(p, 1.0f);
-  gl_PointSize = compute_size(gl_Position.z, decay);
+  gl_PointSize = compute_size(gl_Position.z, decay) * renderParameters[type].size_scale_factor;
 
- 
+  particleType = type;
+}
+
+
 }
 
 // ----------------------------------------------------------------------------

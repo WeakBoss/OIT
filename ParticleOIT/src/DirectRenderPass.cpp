@@ -17,7 +17,10 @@ void CDirectRenderPass::initV()
     genRenderParametersBuffer();
     genSmokeTexture();
 
-    createVAO4ScreenQuad();
+    m_FloorTexture = std::make_shared<hiveGraphics::STexture>();
+    m_FloorTexture->TextureType = STexture::ETextureType::Texture2D;
+    loadTextureFromFile("textures/floor3.jpg", m_FloorTexture);
+
 }
 //**************************************************************************************************
 //FUNCTION:
@@ -27,13 +30,15 @@ void CDirectRenderPass::updateV()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
     glDisable(GL_BLEND);
 
     m_pRenderGridShader->activeShader();
-   
     m_pGridObj->use();
-    m_pRenderGridShader->setFloatUniformValue("uScaleFactor", m_pGridObj->getScaleFactor());
-    glDrawArrays(GL_LINES, 0, m_pGridObj->getNumVertices());
+    m_pRenderGridShader->setTextureUniformValue("uFloorTexture", m_FloorTexture);
+    m_pRenderGridShader->setFloatUniformValue("u_ScaleFator",  m_pGridObj->getScaleFactor());
+    m_pRenderGridShader->setMat4UniformValue("u_Model", glm::value_ptr(m_pGridObj->getModelMatrix()));
+    glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0u);
     glUseProgram(0u);
 
@@ -41,13 +46,18 @@ void CDirectRenderPass::updateV()
     
     m_pRenderPointSpriteShader->activeShader();
     m_pRenderPointSpriteShader->setTextureUniformValue("uSmokeTexture", m_ParticleTexture);
+
     bindRenderParameters();
 
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glEnable(GL_PROGRAM_POINT_SIZE);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+    glDepthFunc(GL_ALWAYS);
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glBlendEquation(GL_FUNC_ADD);
+
+    glEnable(GL_PROGRAM_POINT_SIZE);
     m_pParticleSystemObj->use();
  
     void const* offset = reinterpret_cast<void const*>(offsetof(TIndirectValues, DrawCount));
@@ -65,10 +75,12 @@ void CDirectRenderPass::genSmokeTexture()
     m_ParticleTexture = std::make_shared<hiveGraphics::STexture>();
     m_ParticleTexture->InternalFormat = GL_RGBA;
     m_ParticleTexture->ExternalFormat = GL_RGBA;
-    m_ParticleTexture->TextureType = STexture::ETextureType::Texture2D;
+    m_ParticleTexture->TextureType = STexture::ETextureType::Texture2DArray;
     m_ParticleTexture->TextureAttachmentType = STexture::ETextureAttachmentType::ColorTexture;
-
-    loadTextureFromFile("textures/smoke2.png", m_ParticleTexture);
+    const std::vector<std::string> TexturePath = { "textures/smoke2.png","textures/smoke1.png" };
+    m_ParticleTexture->Depth = TexturePath.size();
+    loadTextureFromFile(TexturePath,m_ParticleTexture);
+   
 }
 
 //**************************************************************************************************

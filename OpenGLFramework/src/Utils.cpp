@@ -540,27 +540,38 @@ void configureHDRTexture(const std::string& vFilePath, std::shared_ptr<hiveGraph
 //Function:
 GLvoid loadTextureFromFile(const std::string& vFilePath, std::shared_ptr<hiveGraphics::STexture> voTexture2D)
 {
-	GLint ImageWidth = 0, ImageHeight = 0;
-	
-	std::vector<std::string> SplitStringSet;
-	boost::split(SplitStringSet, vFilePath, boost::is_any_of(".")); 
-	bool IsUseStbi = true;
-	gli::texture GLITexture;
-	if (*(SplitStringSet.end() - 1) == "dds")
-	{
-		configureDDSTexture(vFilePath, GLITexture, voTexture2D);
-		IsUseStbi = false;
-	}
-	else if (*(SplitStringSet.end() - 1) == "hdr")
-		configureHDRTexture(vFilePath, voTexture2D);
-	else
-		configureCommonTexture(vFilePath, voTexture2D);
-
-	genTexture(voTexture2D);
-
-	if (IsUseStbi) stbi_image_free(voTexture2D->pDataSet[0]);
+	const std::vector<std::string> FilePath = { vFilePath };
+	loadTextureFromFile(FilePath, voTexture2D);
 }
+//************************************************************************************
+//Function:
+GLvoid loadTextureFromFile(const std::vector<std::string>& vFilePath, std::shared_ptr<hiveGraphics::STexture> voTexture2D)
+{
+	std::vector<bool> IsUseStbi(vFilePath.size(), true);
+	for (int i = 0; i < vFilePath.size(); i++)
+	{
+        GLint ImageWidth = 0, ImageHeight = 0;
 
+        std::vector<std::string> SplitStringSet;
+        boost::split(SplitStringSet, vFilePath[i], boost::is_any_of("."));
+        gli::texture GLITexture;
+        if (*(SplitStringSet.end() - 1) == "dds")
+        {
+            configureDDSTexture(vFilePath[i], GLITexture, voTexture2D);
+			IsUseStbi[i] = false;
+        }
+        else if (*(SplitStringSet.end() - 1) == "hdr")
+            configureHDRTexture(vFilePath[i], voTexture2D);
+        else
+            configureCommonTexture(vFilePath[i], voTexture2D);
+	}
+    genTexture(voTexture2D);
+	for (int i = 0; i < vFilePath.size(); i++)
+	{
+		if (IsUseStbi[i]) stbi_image_free(voTexture2D->pDataSet[i]);
+	}
+   
+}
 //************************************************************************************
 //Function:
 //GLvoid loadTextureFromFile(const std::string& vFilePath)

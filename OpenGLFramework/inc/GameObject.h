@@ -58,7 +58,7 @@ private:
 	int m_ExecutionOrder = -1;
 	std::string m_Name;
 	glm::vec3   m_Position;
-	glm::vec3	m_RotationAngle;	//绕xyz轴的旋转角度
+	glm::vec3	m_RotationAngle = glm::vec3(0.0f);	//绕xyz轴的旋转角度
 	glm::vec3	m_Scale = glm::vec3(1, 1, 1);
 	glm::mat4	m_ModelMatrix = glm::mat4(1.0f);
 	glm::mat4   m_TranslationMatrix = glm::mat4(1.0f);

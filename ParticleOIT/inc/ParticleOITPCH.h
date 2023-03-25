@@ -9,7 +9,7 @@
 #include "GameObject.h"
 #include "RenderPass.h"
 #include "ParticleSystemCommon.h"
-#include "ParticleOITConfiguration.h"
+#include "ParticleOITCommon.h"
 
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>

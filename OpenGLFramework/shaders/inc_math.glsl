@@ -63,9 +63,9 @@ vec3 disk_distribution(float radius, vec2 rn) {
   );
 }
 
-vec3 disk_even_distribution(float radius, uint id, uint total) {
+vec3 disk_even_distribution(float radius, uint id, uint total, float random) {
   // ref : http://blog.marmakoide.org/?p=1
-  const float theta = id * GoldenAngle();
+  const float theta = id * GoldenAngle() * random;
   const float r = radius *  sqrt(id / float(total));
   return vec3(
     r * cos(theta),

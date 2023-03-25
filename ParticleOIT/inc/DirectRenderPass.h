@@ -24,8 +24,8 @@ private:
     std::shared_ptr<CGridObj> m_pGridObj = nullptr;
 
     std::shared_ptr<hiveGraphics::STexture> m_ParticleTexture = nullptr;
- 
-    
+    std::shared_ptr<hiveGraphics::STexture> m_FloorTexture = nullptr;
+
     GLuint m_RenderParametersBuffer;
     SRenderParameters* m_pMapRenderParameters;
 

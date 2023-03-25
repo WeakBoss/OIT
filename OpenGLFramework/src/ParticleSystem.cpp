@@ -74,10 +74,7 @@ void CParticleSystem::deinit() {
 //**************************************************************************************************
 //FUNCTION:
 void CParticleSystem::update(const float vDeltaTime, glm::mat4x4 const& vViewMat) {
- 
-    /* Update random buffer with new values */
- 
-
+    
     m_pAppendConsumeBuffer->bindAttributes();
     m_pAppendConsumeBuffer->bindAtomics();
     m_pRandBuffer->bind();
