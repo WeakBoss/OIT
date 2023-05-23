@@ -10,5 +10,5 @@ ComputeShader 中更新，充分利用 GPU 的并行计算能力。使用半透明烟雾粒子纹理，结合 
 # 注意事项
 为了索引头指针纹理，可以用裁剪空间坐标计算屏幕空间坐标。但在第一个Pass中，当渲染到纹理并且处于DirectX平台时，unity会翻转投影矩阵，此时用裁剪空间坐标计算屏幕空间坐标比较麻烦，可以直接在Fragment Shader中访问SV_POSITION拿到屏幕空间坐标。第二个Pass，可以正常通过裁剪空间坐标计算屏幕空间坐标，并且因为是渲染一个Quad，纹理坐标*屏幕长宽就是屏幕空间坐标。
 ![](gif/femaleHair.png)
-![不使用OIT会有面片重叠的边界出现](gif/kaijikayNoOit.png) 不使用OIT会有面片重叠的边界出现
+![](gif/kaijikayNoOit.png) 不使用OIT会有面片重叠的边界出现
 ![](gif/KaijikayOit.png)
