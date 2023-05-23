@@ -3,3 +3,4 @@
 ComputeShader 中更新，充分利用 GPU 的并行计算能力。使用半透明烟雾粒子纹理，结合 Screen-Aligned 公告板实现烟雾效果。
 
 ![](gif/cloud.gif)
+![](gif/粒子设置.png)
