@@ -12,4 +12,4 @@ ComputeShader 中更新，充分利用 GPU 的并行计算能力。使用半透明烟雾粒子纹理，结合 
 ![](gif/femaleHair.png) 使用OIT绘制头发面片，可以表现出发丝交叉的效果
 ![](gif/kaijikayNoOit.png) 不使用OIT会有面片重叠的边界出现
 ![](gif/KaijikayOit.png) 使用OIT
-![](gif/RawModel.png) 原始模型
+![](gif/RawModel.jpg) 原始模型
