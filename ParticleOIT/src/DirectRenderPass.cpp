@@ -68,6 +68,7 @@ void CDirectRenderPass::updateV()
 
     glUseProgram(0u);
 }
+ 
 //**************************************************************************************************
 //FUNCTION:
 void CDirectRenderPass::genSmokeTexture()
